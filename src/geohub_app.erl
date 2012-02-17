@@ -10,20 +10,10 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
-    application:start(mongodb),
+    ok = application:start(lager),
+    ok = application:start(mongodb),
     geohub_sup:start_link().
 
 stop(_State) ->
     ok.
 
-
--ifdef(TEST).
--include_lib("eunit/include/eunit.hrl").
-
-simple_test() ->
-    ok = application:start(geohub),
-
-    ?assertNot(undefined == whereis(geohub_sup)),
-    ?assertEqual({error, {already_started, mongodb}}, application:start(mongodb)).
-
--endif.
