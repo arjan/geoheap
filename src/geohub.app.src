@@ -1,0 +1,13 @@
+{application, geohub,
+ [
+  {description, "GeoHub for aggregating location-based service data"},
+  {vsn, "1"},
+  {registered, []},
+  {applications, [
+                  kernel,
+                  stdlib,
+                  mongodb
+                 ]},
+  {mod, { geohub_app, []}},
+  {env, []}
+ ]}.
