@@ -10,6 +10,7 @@
 %% ===================================================================
 
 start(_StartType, _StartArgs) ->
+    application:start(mongodb),
     geohub_sup:start_link().
 
 stop(_State) ->
@@ -21,6 +22,8 @@ stop(_State) ->
 
 simple_test() ->
     ok = application:start(geohub),
-    ?assertNot(undefined == whereis(geohub_sup)).
+
+    ?assertNot(undefined == whereis(geohub_sup)),
+    ?assertEqual({error, {already_started, mongodb}}, application:start(mongodb)).
 
 -endif.
