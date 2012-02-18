@@ -40,7 +40,6 @@ init(_Args) ->
                                     [],
                                     [{sync, false},
                                      {stream, self}]),
-    lager:info("Twitter starting.."),
     {ok, #state{request_id=RequestId, statz_id=StatzId}}.
 
 handle_call(_Request, _From, State) ->
@@ -49,11 +48,18 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
+handle_info({http, {_, stream_start, _Headers}}, State) ->
+    {noreply, State};
+
 handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_id=R}) ->
-    %%lager:info("~p~n", []),
     statz:incr(?MODULE),
-    Doc = {source, twitter, data, geohub_util:json_to_bson(Content)},
-    geohub_store:put(twitter, Doc),
+    try 
+        Doc = {source, twitter, data, geohub_util:json_to_bson(Content)},
+        geohub_store:put(twitter, Doc)
+    catch
+        _:E ->
+            lager:error("~p: ~p~n", [E, Content])
+    end,
     {noreply, State};
 
 handle_info(Info, State) ->
