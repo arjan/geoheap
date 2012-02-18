@@ -44,7 +44,8 @@ start_link() ->
 
 init([]) ->
     All = [
-           ?CHILD(geohub_store, worker)
+           ?CHILD(geohub_store, worker),
+           ?CHILD(geohub_twitter, worker)
           ],
     {ok, { {one_for_one, 5, 10}, All} }.
 

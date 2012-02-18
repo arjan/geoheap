@@ -29,10 +29,11 @@
 
 %% interface functions
 -export([
-         ping/0
+         ping/0,
+         put/2
 ]).
 
--record(state, {db}).
+-record(state, {db, conn}).
 
 
 %%====================================================================
@@ -46,6 +47,9 @@ start_link() ->
 ping() ->
     gen_server:call(?MODULE, ping).
 
+put(Collection, Document) ->
+    gen_server:cast(?MODULE, {put, Collection, Document}).
+
 %%====================================================================
 %% gen_server callbacks
 %%====================================================================
@@ -55,17 +59,26 @@ init(_Args) ->
     lager:info("~p started", [?MODULE]),
     Host = {localhost, 27017},
     {ok, Conn} = mongo:connect (Host),
-    {ok, #state{db=Conn}}.
+    {ok, #state{conn=Conn, db=test}}.
 
 
 %% @doc Trap unknown calls
 handle_call(ping, _From, State) ->
     {reply, pong, State};
 
+
 %% @doc Trap unknown calls
 handle_call(Message, _From, State) ->
     {stop, {unknown_call, Message}, State}.
 
+
+%% @doc Trap unknown calls
+handle_cast({put, Collection, Document}, State) ->
+    {ok, _} = mongo:do(safe, master, State#state.conn, State#state.db,
+                       fun() ->
+                               mongo:insert(Collection, Document)
+                       end),
+    {noreply, State};
 
 %% @doc Trap unknown casts
 handle_cast(Message, State) ->
