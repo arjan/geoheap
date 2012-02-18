@@ -6,7 +6,7 @@
   {applications, [
                   kernel,
                   stdlib,
-                  crypto
+                  crypto, lager, mongodb
                  ]},
   {mod, { geohub_app, []}},
   {env, []}
