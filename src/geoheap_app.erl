@@ -1,4 +1,4 @@
--module(geohub_app).
+-module(geoheap_app).
 
 -behaviour(application).
 
@@ -10,10 +10,10 @@
 %% ===================================================================
 
 start() ->
-    application:start(geohub).
+    application:start(geoheap).
 
 start(_StartType, _StartArgs) ->
-    geohub_sup:start_link().
+    geoheap_sup:start_link().
 
 stop(_State) ->
     ok.

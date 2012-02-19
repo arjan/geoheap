@@ -18,7 +18,7 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 
--module(geohub_store).
+-module(geoheap_store).
 -author("Arjan Scherpenisse <arjan@scherpenisse.net>").
 
 -behaviour(gen_server).

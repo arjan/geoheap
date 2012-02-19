@@ -18,7 +18,7 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 
--module(geohub_util).
+-module(geoheap_util).
 
 -export([proplist_to_bson/1,
          json_to_bson/1,

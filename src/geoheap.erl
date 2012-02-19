@@ -18,11 +18,11 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 
--module(geohub).
+-module(geoheap).
 
 -export([start/0]).
 
-start() -> start(geohub).
+start() -> start(geoheap).
 
 start(App) ->
     start_ok(App, application:start(App, permanent)).

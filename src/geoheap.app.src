@@ -1,4 +1,4 @@
-{application, geohub,
+{application, geoheap,
  [
   {description, "GeoHub for aggregating location-based service data"},
   {vsn, "1"},
@@ -7,6 +7,6 @@
                   kernel, stdlib, inets, ssl, crypto,
                   lager, mongodb, statz
                  ]},
-  {mod, { geohub_app, []}},
+  {mod, { geoheap_app, []}},
   {env, []}
  ]}.

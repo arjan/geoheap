@@ -18,7 +18,7 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 
--module(geohub_sup).
+-module(geoheap_sup).
 
 -behaviour(supervisor).
 
@@ -44,8 +44,8 @@ start_link() ->
 
 init([]) ->
     All = [
-           ?CHILD(geohub_store, worker),
-           ?CHILD(geohub_twitter, worker)
+           ?CHILD(geoheap_store, worker),
+           ?CHILD(geoheap_twitter, worker)
           ],
     {ok, { {one_for_one, 5, 10}, All} }.
 

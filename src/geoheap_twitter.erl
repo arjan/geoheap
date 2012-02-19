@@ -1,4 +1,4 @@
--module(geohub_twitter).
+-module(geoheap_twitter).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 
@@ -30,17 +30,8 @@ start_link() ->
 
 init(_Args) ->
     {ok, StatzId} = statz:new(?MODULE),
-    Login = "acscherp",
-    Pass = "cooljoe8",
-    URL = "https://" ++ Login ++ ":" ++ Pass ++ "@stream.twitter.com/1/statuses/filter.json",
-    %%Body = "locations=52.333968,4.845314,52.390576,4.943504",
-    Body = "locations=-122.75,36.8,-121.75,37.8,-74,40,-73,41",
-    {ok, RequestId} = httpc:request(post,
-                                    {URL, [], "application/x-www-form-urlencoded", Body},
-                                    [],
-                                    [{sync, false},
-                                     {stream, self}]),
-    {ok, #state{request_id=RequestId, statz_id=StatzId}}.
+    State = #state{statz_id=StatzId},
+    {ok, reconnect(State)}.
 
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
@@ -54,13 +45,16 @@ handle_info({http, {_, stream_start, _Headers}}, State) ->
 handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_id=R}) ->
     statz:incr(?MODULE),
     try 
-        Doc = {source, twitter, data, geohub_util:json_to_bson(Content)},
-        geohub_store:put(twitter, Doc)
+        Doc = {source, twitter, data, geoheap_util:json_to_bson(Content)},
+        geoheap_store:put(twitter, Doc)
     catch
         _:E ->
             lager:error("~p: ~p~n", [E, Content])
     end,
     {noreply, State};
+
+handle_info({http,{R,{error,socket_closed_remotely}}}, State=#state{request_id=R}) ->
+    {noreply, reconnect(State)};
 
 handle_info(Info, State) ->
     lager:info("twitter: Unhandled message: ~p~n", [Info]),
@@ -76,3 +70,17 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
+reconnect(State) ->
+    lager:info("twitter: Reconnect."),
+
+    Login = "acscherp",
+    Pass = "cooljoe8",
+    URL = "https://" ++ Login ++ ":" ++ Pass ++ "@stream.twitter.com/1/statuses/filter.json",
+    %%Body = "locations=52.333968,4.845314,52.390576,4.943504",
+    Body = "locations=-122.75,36.8,-121.75,37.8,-74,40,-73,41",
+    {ok, RequestId} = httpc:request(post,
+                                    {URL, [], "application/x-www-form-urlencoded", Body},
+                                    [],
+                                    [{sync, false},
+                                     {stream, self}]),
+    State#state{request_id=RequestId}.
