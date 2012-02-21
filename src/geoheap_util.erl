@@ -19,18 +19,39 @@
 %% limitations under the License.
 
 -module(geoheap_util).
+-include("../include/geoheap.hrl").
 
 -export([proplist_to_bson/1,
          json_to_bson/1,
-         to_utf8/1
+         bson_to_solr/1,
+         to_utf8/1,
+         doc_from_tweet/1
         ]).
 
 proplist_to_bson(List) ->
     list_to_tuple(
       lists:foldr(fun({K,V}, Acc) -> [K, V | Acc] end, [], List)).
 
+bson_to_solr(Document) ->
+    {doc, proplists:delete(original, bson:fields(Document))}.
+
 json_to_bson(Json) ->
     decode_json(mochijson:decode(Json)).
+
+
+doc_from_tweet(Tweet) ->
+    {Id} = bson:lookup(id_str, Tweet),
+    {Text} = bson:lookup(text, Tweet),
+    {RawDate} = bson:lookup(created_at, Tweet),
+    Date = dh_date:parse(binary_to_list(RawDate)),
+    FormattedDate = list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date)),
+    {source, <<"twitter">>,
+     original, Tweet,
+     id, Id,
+     text, Text,
+     date, FormattedDate
+    }.
+
 
 decode_json({struct, KeyValues}) ->
     P = [{list_to_atom(K), decode_json(V)} || {K,V} <- KeyValues],

@@ -1,6 +1,29 @@
+%% @author Arjan Scherpenisse <arjan@scherpenisse.net>
+%% @copyright 2012 Arjan Scherpenisse <arjan@scherpenisse.net>
+%% Date: 2012-02-21
+
+%% @doc geohub: twitter aggregator.
+
+%% Copyright 2012 Arjan Scherpenisse
+%%
+%% Licensed under the Apache License, Version 2.0 (the "License");
+%% you may not use this file except in compliance with the License.
+%% You may obtain a copy of the License at
+%% 
+%%     http://www.apache.org/licenses/LICENSE-2.0
+%% 
+%% Unless required by applicable law or agreed to in writing, software
+%% distributed under the License is distributed on an "AS IS" BASIS,
+%% WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+%% See the License for the specific language governing permissions and
+%% limitations under the License.
+
 -module(geoheap_twitter).
+
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
+
+-include("../include/geoheap.hrl").
 
 %% ------------------------------------------------------------------
 %% API Function Exports
@@ -42,14 +65,22 @@ handle_cast(_Msg, State) ->
 handle_info({http, {_, stream_start, _Headers}}, State) ->
     {noreply, State};
 
+handle_info({http, {R, stream, <<"\n">>}}, State=#state{request_id=R}) ->
+    %% Twitter keepalive
+    {noreply, State};
+
 handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_id=R}) ->
-    statz:incr(?MODULE),
     try 
-        Doc = {source, twitter, data, geoheap_util:json_to_bson(Content)},
-        geoheap_store:put(twitter, Doc)
+        BSON = geoheap_util:json_to_bson(Content),
+        Doc = geoheap_util:doc_from_tweet(BSON),
+        geoheap_store:put(geoheap, Doc),
+        geoheap_indexer:put(Doc),
+        statz:incr(?MODULE)
     catch
+        _:{badmatch,{}} -> nop;
         _:E ->
-            lager:error("~p: ~p~n", [E, Content])
+            lager:error("~p: ~p~n", [E, Content]),
+            ok
     end,
     {noreply, State};
 
@@ -73,11 +104,12 @@ code_change(_OldVsn, State, _Extra) ->
 reconnect(State) ->
     lager:info("twitter: Reconnect."),
 
-    Login = "acscherp",
-    Pass = "cooljoe8",
-    URL = "https://" ++ Login ++ ":" ++ Pass ++ "@stream.twitter.com/1/statuses/filter.json",
-    %%Body = "locations=52.333968,4.845314,52.390576,4.943504",
-    Body = "locations=-122.75,36.8,-121.75,37.8,-74,40,-73,41",
+    {ok, Login} = application:get_env(geoheap, twitter_username),
+    {ok, Password} = application:get_env(geoheap, twitter_password),
+    URL = "https://" ++ Login ++ ":" ++ Password ++ "@stream.twitter.com/1/statuses/filter.json",
+    Body = "locations=-180,-90,180,90", % whole world
+    %Body = "locations=50.790195,3.762817,53.388134,7.113647", % NL
+    %%Body = "locations=-122.75,36.8,-121.75,37.8,-74,40,-73,41", % ny + la
     {ok, RequestId} = httpc:request(post,
                                     {URL, [], "application/x-www-form-urlencoded", Body},
                                     [],

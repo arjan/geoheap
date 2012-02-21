@@ -45,6 +45,7 @@ start_link() ->
 init([]) ->
     All = [
            ?CHILD(geoheap_store, worker),
+           ?CHILD(geoheap_indexer, worker),
            ?CHILD(geoheap_twitter, worker)
           ],
     {ok, { {one_for_one, 5, 10}, All} }.
