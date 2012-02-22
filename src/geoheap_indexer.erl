@@ -2,9 +2,9 @@
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 
--record(state, {committer, uncommitted=0}).
+-record(state, {committer, pending=[]}).
 -define(COMMIT_INTERVAL, 1500).
--define(COMMIT_MAXCOUNT, 100).
+-define(COMMIT_MAXCOUNT, 200).
 
 %% ------------------------------------------------------------------
 %% API Function Exports
@@ -40,23 +40,21 @@ init(_Args) ->
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
-handle_cast({put, Document}, State=#state{uncommitted=C}) ->
-    esolr:add([geoheap_util:bson_to_solr(Document)]),
-    State1 = case C >= ?COMMIT_MAXCOUNT of
+handle_cast({put, Document}, State=#state{pending=P}) ->
+    State1 = State#state{pending=[geoheap_util:bson_to_solr(Document)|P]},
+    State2 = case length(State1#state.pending) >= ?COMMIT_MAXCOUNT of
                  true ->
-                     esolr:commit(),
-                     State#state{uncommitted=0};
+                     commit(State1);
                  false ->
-                     State#state{uncommitted=C+1}
+                     State1
              end,
-    {noreply, bump_commit(State1)};
+    {noreply, bump_commit(State2)};
 
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
 handle_info(commit, State) ->
-    esolr:commit(),
-    {noreply, State#state{committer=undefined, uncommitted=0}};
+    {noreply, commit(State)};
      
 handle_info(_Info, State) ->
     {noreply, State}.
@@ -70,6 +68,11 @@ code_change(_OldVsn, State, _Extra) ->
 %% ------------------------------------------------------------------
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
+
+commit(State=#state{pending=Pending}) ->
+    esolr:add(Pending),
+    esolr:commit(),
+    State#state{pending=[]}.
 
 %% bump a commit timer
 bump_commit(State=#state{committer=undefined}) ->

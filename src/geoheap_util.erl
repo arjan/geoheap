@@ -33,7 +33,17 @@ proplist_to_bson(List) ->
       lists:foldr(fun({K,V}, Acc) -> [K, V | Acc] end, [], List)).
 
 bson_to_solr(Document) ->
-    {doc, proplists:delete(original, bson:fields(Document))}.
+    Props1 = bson:fields(Document),
+    Location = case proplists:get_value(location, Props1) of
+                   undefined -> [];
+                   [0,0] -> [];
+                   [X, Y] -> [{location, list_to_binary(lists:flatten(io_lib:format("~.5f,~.5f", [X+0.0, Y+0.0])))}]
+               end,
+    Props2 = proplists:delete(original,
+                              proplists:delete(location,
+                                               Props1)),
+    Props3 = Location ++ Props2,
+    {doc, Props3}.
 
 json_to_bson(Json) ->
     decode_json(mochijson:decode(Json)).
@@ -45,12 +55,20 @@ doc_from_tweet(Tweet) ->
     {RawDate} = bson:lookup(created_at, Tweet),
     Date = dh_date:parse(binary_to_list(RawDate)),
     FormattedDate = list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date)),
-    {source, <<"twitter">>,
-     original, Tweet,
-     id, Id,
-     text, Text,
-     date, FormattedDate
-    }.
+    Location = case bson:lookup(geo, Tweet) of
+                   {null} -> undefined;
+                   {{type, <<"Point">>, coordinates, P=[_,_]}} -> P
+               end,
+    {User} = bson:lookup(user, Tweet),
+    {ScreenName} = bson:lookup(screen_name, User),
+    list_to_tuple([source, <<"twitter">>,
+                   original, Tweet,
+                   location, Location,
+                   screenname, ScreenName,
+                   id, Id,
+                   text, Text,
+                   date, FormattedDate
+                  ]).
 
 
 decode_json({struct, KeyValues}) ->

@@ -5,7 +5,7 @@
   {registered, []},
   {applications, [
                   kernel, stdlib, inets, ssl, crypto,
-                  lager, mongodb, statz, esolr
+                  cowboy, lager, mongodb, statz, esolr
                  ]},
   {mod, { geoheap_app, []}},
   {env, []}

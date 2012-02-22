@@ -45,12 +45,18 @@ tweet_test() ->
     ?assertEqual({Tweet}, bson:lookup(original, Doc)),
     %Tue Feb 21 15:34:43 +0000 2012
     ?assertEqual({<<"2012-02-21T15:34:43Z">>}, bson:lookup(date, Doc)),
-    ok.
 
+    Tweet2 = {in_reply_to_user_id_str,null,text,<<"Im at My House (Erie, PA) http://t.co/pRstTqLB">>,geo,{type,<<"Point">>,coordinates,[42.13137262,-80.07763525]},in_reply_to_screen_name,null,in_reply_to_user_id,null,favorited,false,contributors,null,retweeted,false,possibly_sensitive_editable,true,retweet_count,0,created_at,<<"Tue Feb 21 21:21:20 +0000 2012">>,id_str,<<"172068410069487616">>,in_reply_to_status_id,null,entities,{user_mentions,[],hashtags,[],urls,[{indices,[27,47],display_url,<<"4sq.com/w60dil">>,url,<<"http://t.co/pRstTqLB">>,expanded_url,<<"http://4sq.com/w60dil">>}]},in_reply_to_status_id_str,null,place,{bounding_box,{type,<<"Polygon">>,coordinates,[[[-80.153583,42.077238],[-80.003376,42.077238],[-80.003376,42.173707],[-80.153583,42.173707]]]},country,<<"United States">>,attributes,{},full_name,<<"Erie, PA">>,url,<<"http://api.twitter.com/1/geo/id/29aaa88d9fe74b50.json">>,country_code,<<"US">>,name,<<"Erie">>,id,<<"29aaa88d9fe74b50">>,place_type,<<"city">>},coordinates,{type,<<"Point">>,coordinates,[-80.07763525,42.13137262]},user,{show_all_inline_media,false,following,null,profile_background_color,<<"642D8B">>,profile_image_url_https,<<"https://si0.twimg.com/profile_images/1127627222/newme_normal.jpg">>,verified,false,profile_background_tile,true,listed_count,0,time_zone,<<"Eastern Time (US & Canada)">>,profile_sidebar_fill_color,<<"7AC3EE">>,is_translator,false,geo_enabled,true,friends_count,63,followers_count,19,profile_image_url,<<"http://a3.twimg.com/profile_images/1127627222/newme_normal.jpg">>,description,<<>>,default_profile,false,profile_sidebar_border_color,<<"65B0DA">>,follow_request_sent,null,statuses_count,2097,notifications,null,profile_use_background_image,true,created_at,<<"Fri Apr 17 13:39:19 +0000 2009">>,screen_name,<<"skatkat98">>,id_str,<<"32407157">>,profile_text_color,<<"3D1957">>,protected,false,url,<<"http://www.myspace.com/thisismyplace">>,default_profile_image,false,contributors_enabled,false,lang,<<"en">>,profile_background_image_url,<<"http://a1.twimg.com/images/themes/theme10/bg.gif">>,name,<<"Kat Strohmeyer ">>,favourites_count,1,profile_link_color,<<"FF0000">>,id,32407157,profile_background_image_url_https,<<"https://si0.twimg.com/images/themes/theme10/bg.gif">>,utc_offset,-18000,location,<<"Erie, PA">>},truncated,false,id,172068410069487616,possibly_sensitive,false},
+
+    Doc2 = geoheap_util:doc_from_tweet(Tweet2),
+    ?assertEqual({[42.13137262,-80.07763525]}, bson:lookup(location, Doc2)),
+    ?assertEqual({<<"skatkat98">>}, bson:lookup(screenname, Doc2)),
+    ?assertEqual({<<"House">>}, bson:lookup(keyword, Doc2)),
+    ok.
+    
 unicode_test() ->
     %% lager:info("~p~n", [xmerl_ucs:from_utf8("øfßðáfö³²’¥‘¤ë€í³’‘íëfßœðï¶fœøßð¶gø")]),
 
-    %% X = xmerl_ucs:from_utf8("øfßðáfö³²’¥‘¤ë€í³’‘íëfßœðï¶fœøßð¶gø"),
     %% lager:info("~p~n", [unicode:characters_to_binary(X)]),
     %%X2 = [73,32,102,101,101,108,32,109,97,100,32,115,105,99,107,32,55357,56862],
     %%lager:info("~p~n", [unicode:characters_to_binary(X2)]),
