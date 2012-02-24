@@ -11,6 +11,8 @@
             self.data = [];
             for (var i=0; i<300; i++)
                 self.data.push(100*Math.random());
+            self.timeStart = new Date("2012-01-01");
+            self.timeEnd = new Date("2012-02-01");
 
             self.zoomlevel = 1;
             self.zoom = 1.0;
@@ -20,10 +22,13 @@
                 
             self.sparkline = $("<div>").appendTo(self.inner);
 
+
             self.curtainLeft = $("<div>").addClass("curtain").appendTo(self.inner);
             self.curtainRight = $("<div>").addClass("curtain").appendTo(self.inner);
             self.bracketLeft = $("<img>").attr("src", "/img/bracket-left.png").addClass("bracket bracket-left").appendTo(self.inner);
             self.bracketRight = $("<img>").attr("src", "/img/bracket-right.png").addClass("bracket bracket-right").appendTo(self.inner);
+
+            self.setupLegend();
 
             self.bracketTimer = self.idleTimer(500, self.bracketChanged);
             self.setBracket(0.2, 0.8);
@@ -52,14 +57,22 @@
             }
             var w = self.inner.width();
             var d = self.bracketLeft.width()/w*.25;
-
-            self.bracket = [Math.max(d, Math.min(1-d, left)), Math.max(d, Math.min(1-d, right))];
+            left = Math.max(d, Math.min(1-d, left));
+            right = Math.max(d, Math.min(1-d, right));
 
             self.curtainLeft.css({width: left * w});
             self.bracketLeft.css({left: left * w - self.bracketLeft.width()});
             self.curtainRight.css({left: right * w, width: w - right * w});
             self.bracketRight.css({left: right * w});
+            
+            self.bracket = [left, right];
             self.bracketTimer.bump();
+
+            var date = function(x) { return new Date(self.timeStart.getTime() + x * (self.timeEnd.getTime()-self.timeStart.getTime())); };
+            self.timeLeft = date(left);
+            self.legendLeft.css({right: w - left*w}).html(self.formatDate(self.timeLeft));
+            self.timeRight = date(right);
+            self.legendRight.css({left: right*w}).html(self.formatDate(self.timeRight));
         },
 
         bracketChanged: function() {
@@ -166,6 +179,34 @@
                            });
         },
 
+        formatDate: function(d) {
+            function pad(n){return n<10 ? '0'+n : n;}
+            return d.getUTCFullYear()+'-'
+                + pad(d.getUTCMonth()+1)+'-'
+                + pad(d.getUTCDate())+'<br/>'
+                + pad(d.getUTCHours())+':'
+                + pad(d.getUTCMinutes())+':'
+                + pad(d.getUTCSeconds());
+        },
+
+        setupLegend: function() {
+            var self = this;
+            self.legend = $("<div>").addClass("legend").appendTo(self.inner);
+
+            $("<span>")
+                .html(self.formatDate(self.timeStart)).appendTo(self.legend);
+            $("<span>")
+                .addClass("right")
+                .css({right: 0})
+                .html(self.formatDate(self.timeEnd)).appendTo(self.legend);
+
+            self.legendLeft = $("<span>")
+                .addClass("right")
+                .html("xx").appendTo(self.legend);
+            self.legendRight = $("<span>")
+                .html("xx").appendTo(self.legend);
+
+        },
 
         idleTimer: function (d, c)
         {

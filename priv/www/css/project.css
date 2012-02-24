@@ -26,6 +26,17 @@ img.bracket-right {
     cursor: w-resize;
 }
 
+.do_timebar div.inner div.legend {
+    width: 100%;
+    height: 40px;
+    top: 60px;
+}
+.do_timebar div.inner div.legend span {
+    position: absolute;
+}
+.do_timebar div.inner div.legend span.right {
+    text-align: right;
+}
 
 .do_timebar div.inner div.curtain {
     background: rgba(255,255,255,0.5);
@@ -34,5 +45,5 @@ img.bracket-right {
 
 .timebar {
     width: 100%;
-    height: 80px;
+    height: 100px;
 }
