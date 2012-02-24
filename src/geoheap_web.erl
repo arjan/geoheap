@@ -39,5 +39,7 @@ mime() ->
     [
      {<<".html">>, [<<"text/html">>]},
      {<<".css">>, [<<"text/css">>]},
+     {<<".png">>, [<<"image/png">>]},
+     {<<".jpg">>, [<<"image/jpeg">>]},
      {<<".js">>, [<<"application/javascript">>]}
     ].

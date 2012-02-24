@@ -3,6 +3,7 @@
 ebin/*
 priv/solr/
 priv/contrib/
+priv/dist/
 log
 /erl_crash.dump
 /dev.config

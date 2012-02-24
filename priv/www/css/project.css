@@ -1,0 +1,38 @@
+.do_timebar {
+    overflow: hidden;
+    cursor: move;
+    position: relative;
+}
+
+.do_timebar div.inner {
+    width: 100%;
+}
+
+.do_timebar div.inner div,
+.do_timebar div.inner img,
+.do_timebar div.inner {
+    position: absolute;
+}
+
+.do_timebar div.inner img.bracket {
+    width: 30px;
+    height: 60px;
+    top: 0;
+}
+img.bracket-left {
+    cursor: e-resize;
+}
+img.bracket-right {
+    cursor: w-resize;
+}
+
+
+.do_timebar div.inner div.curtain {
+    background: rgba(255,255,255,0.5);
+    height: 60px;
+}
+
+.timebar {
+    width: 100%;
+    height: 80px;
+}
