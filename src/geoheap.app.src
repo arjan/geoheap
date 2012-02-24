@@ -1,6 +1,6 @@
 {application, geoheap,
  [
-  {description, "GeoHub for aggregating location-based service data"},
+  {description, "GeoHeap: aggregating location-based service data"},
   {vsn, "1"},
   {registered, []},
   {applications, [

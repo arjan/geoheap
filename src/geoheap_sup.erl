@@ -44,15 +44,7 @@ start_link() ->
 
 init([]) ->
 
-    %% Dispatch = [
-    %%             {'_', [
-    %%                    {['...'], cowboy_http_static, [{directory, {priv_dir, cowboy, []}}, {etag, default}]}
-    %%                   ]}
-    %%            ],
-    %% cowboy:start_listener(my_http_listener, 100,
-    %%                       cowboy_tcp_transport, [{port, 8080}],
-    %%                       cowboy_http_protocol, [{dispatch, Dispatch}]
-    %%                      ),
+    geoheap_web:setup(),
     
     All = [
            ?CHILD(geoheap_store, worker),

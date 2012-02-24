@@ -1,7 +1,8 @@
 /deps
 .eunit
 ebin/*
-
+priv/solr/
+priv/contrib/
 log
 /erl_crash.dump
 /dev.config

@@ -62,6 +62,7 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
+
 handle_info({http, {_, stream_start, _Headers}}, State) ->
     {noreply, State};
 
@@ -70,7 +71,7 @@ handle_info({http, {R, stream, <<"\n">>}}, State=#state{request_id=R}) ->
     {noreply, State};
 
 handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_id=R}) ->
-    try 
+    try
         BSON = geoheap_util:json_to_bson(Content),
         Doc = geoheap_util:doc_from_tweet(BSON),
         geoheap_store:put(geoheap, Doc),
@@ -107,8 +108,9 @@ reconnect(State) ->
     {ok, Login} = application:get_env(geoheap, twitter_username),
     {ok, Password} = application:get_env(geoheap, twitter_password),
     URL = "https://" ++ Login ++ ":" ++ Password ++ "@stream.twitter.com/1/statuses/filter.json",
-    Body = "locations=-180,-90,180,90", % whole world
+    %Body = "locations=-180,-90,180,90", % whole world
     %Body = "locations=50.790195,3.762817,53.388134,7.113647", % NL
+    Body = "track=instagram",
     %%Body = "locations=-122.75,36.8,-121.75,37.8,-74,40,-73,41", % ny + la
     {ok, RequestId} = httpc:request(post,
                                     {URL, [], "application/x-www-form-urlencoded", Body},

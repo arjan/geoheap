@@ -51,7 +51,11 @@ tweet_test() ->
     Doc2 = geoheap_util:doc_from_tweet(Tweet2),
     ?assertEqual({[42.13137262,-80.07763525]}, bson:lookup(location, Doc2)),
     ?assertEqual({<<"skatkat98">>}, bson:lookup(screenname, Doc2)),
-    ?assertEqual({<<"House">>}, bson:lookup(keyword, Doc2)),
+
+    {doc, Solr} = geoheap_util:bson_to_solr(Doc2),
+    ?DEBUG(Solr),
+
+    ?assertEqual("1d", proplists:get_value(geohash, Solr)),
     ok.
     
 unicode_test() ->

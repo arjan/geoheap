@@ -37,7 +37,14 @@ bson_to_solr(Document) ->
     Location = case proplists:get_value(location, Props1) of
                    undefined -> [];
                    [0,0] -> [];
-                   [X, Y] -> [{location, list_to_binary(lists:flatten(io_lib:format("~.5f,~.5f", [X+0.0, Y+0.0])))}]
+                   [0.0,0.0] -> [];
+                   [X, Y] ->
+                       Hash = geohash:encode(X, Y),
+                       Hashes = [{geohash, lists:flatten([io_lib:format("~1.16B", [N])
+                                                          | lists:sublist(Hash, N)])}
+                                 || N <- lists:seq(1,12)],
+                       [{location, list_to_binary(lists:flatten(
+                                                    io_lib:format("~.5f,~.5f", [X+0.0, Y+0.0])))}|Hashes]
                end,
     Props2 = proplists:delete(original,
                               proplists:delete(location,
