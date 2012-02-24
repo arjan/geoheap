@@ -70,9 +70,9 @@
 
             var date = function(x) { return new Date(self.timeStart.getTime() + x * (self.timeEnd.getTime()-self.timeStart.getTime())); };
             self.timeLeft = date(left);
-            self.legendLeft.css({right: w - left*w}).html(self.formatDate(self.timeLeft));
+            self.legendLeft.css({right: w - left*w}).html(Util.timebarDate(self.timeLeft));
             self.timeRight = date(right);
-            self.legendRight.css({left: right*w}).html(self.formatDate(self.timeRight));
+            self.legendRight.css({left: right*w}).html(Util.timebarDate(self.timeRight));
         },
 
         bracketChanged: function() {
@@ -179,26 +179,16 @@
                            });
         },
 
-        formatDate: function(d) {
-            function pad(n){return n<10 ? '0'+n : n;}
-            return d.getUTCFullYear()+'-'
-                + pad(d.getUTCMonth()+1)+'-'
-                + pad(d.getUTCDate())+'<br/>'
-                + pad(d.getUTCHours())+':'
-                + pad(d.getUTCMinutes())+':'
-                + pad(d.getUTCSeconds());
-        },
-
         setupLegend: function() {
             var self = this;
             self.legend = $("<div>").addClass("legend").appendTo(self.inner);
 
             $("<span>")
-                .html(self.formatDate(self.timeStart)).appendTo(self.legend);
+                .html(Util.timebarDate(self.timeStart)).appendTo(self.legend);
             $("<span>")
                 .addClass("right")
                 .css({right: 0})
-                .html(self.formatDate(self.timeEnd)).appendTo(self.legend);
+                .html(Util.timebarDate(self.timeEnd)).appendTo(self.legend);
 
             self.legendLeft = $("<span>")
                 .addClass("right")
