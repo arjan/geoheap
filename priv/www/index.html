@@ -40,9 +40,11 @@
     <body>
         <div class="navbar navbar-fixed-top">
             <div class="navbar-inner">
-
-                <div class="container">
+                <div class="container-fluid">
                     <a class="brand" href="/">Bijlmer Radar</a>
+                    <div class="pull-right">
+                        <button class="btn" data-toggle="button">Toggle filterbar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -57,10 +59,28 @@
 
         <div class="widget filtertool">
             <form>
-            <h1>Ffdsfsd</h1>
-            <p>fd</p>
-            <button class="btn btn-primary">Filter</button>
-            </form>
-        </div>
+            <h3>Sources</h3>
+
+            <div class="control-group">
+                <div class="controls">
+                    <label class="checkbox inline">
+                        <input id="optionsCheckbox" type="checkbox" value="option1" />Twitter
+                    </label>
+                    <label class="checkbox inline">
+                        <input id="optionsCheckbox" type="checkbox" value="option1" />Instagr.am
+                    </label>
+                </div>
+            </div>
+
+            <h3>Filter</h3>
+            <div class="control-group">
+                <div class="controls">
+                    <input class="span3" type="text" placeholder="Search term or screenname...">
+                </div>
+            </div>
+            
+            <button class="btn btn-primary">Apply</button>
+        </form>
+    </div>
     </body>
 </html>

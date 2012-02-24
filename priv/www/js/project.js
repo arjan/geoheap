@@ -12,4 +12,15 @@ $(function()
                                   myOptions);
     
 
+    Util.PubSub.subscribe('timebar-change', function(timebar) {
+                              var args = {'from': Util.ISODateString(timebar.timeLeft), 
+                                          'to': Util.ISODateString(timebar.timeRight),
+                                          'start': Util.ISODateString(timebar.timeStart),
+                                          'end': Util.ISODateString(timebar.timeEnd)
+                                         };
+
+                              $.ajax({url: '/query?' + $.param(args)});
+                          });
+
+
 });

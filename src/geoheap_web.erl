@@ -19,14 +19,17 @@
 %% limitations under the License.
 
 -module(geoheap_web).
+-include("../include/geoheap.hrl").
 
--export([setup/0]).
+-export([setup/0,
+         geoquery/1]).
 
 setup() ->
     Dispatch = [
                 {'_', [
                        {[], geoheap_web_index, []},
-                       {[<<"json">>], geoheap_web_json, [{callback, fun(Req) -> {{array, [1,2,3]}, Req} end}]},
+                       {[<<"test">>], geoheap_web_json, [{callback, fun(Req) -> {{array, [1,2,3]}, Req} end}]},
+                       {[<<"query">>], geoheap_web_json, [{callback, fun geoheap_web:geoquery/1}]},
                        {['...'], cowboy_http_static, [{directory, "priv/www"}, {mimetypes, mime()}]}
                       ]}
                ],
@@ -43,3 +46,23 @@ mime() ->
      {<<".jpg">>, [<<"image/jpeg">>]},
      {<<".js">>, [<<"application/javascript">>]}
     ].
+
+
+geoquery(Req) ->
+    {All, Req1} = cowboy_http_req:qs_vals(Req),
+    From = proplists:get_value(<<"from">>, All),
+    To = proplists:get_value(<<"to">>, All),
+    Start = proplists:get_value(<<"start">>, All),
+    End = proplists:get_value(<<"end">>, All),
+    Query = ["date:[", From, " TO ", To, "]"],
+?DEBUG(Query),
+
+    {ok, Opts, Docs, Extra} = esolr:search(Query, [{facet_date, "date", Start, End, "+1HOUR"}]),
+?DEBUG(Opts),
+
+    ?DEBUG(length(Docs)),
+
+    %%{"facet_counts", Counts} = proplists:lookup("facet_counts", Extra),
+
+    {{array, [1,2,3,4,5,6,7]}, Req1}.
+

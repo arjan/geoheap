@@ -75,6 +75,10 @@ html,body {height: 100%;}
 .filtertool {
     top: 5em;
     right: 2em;
-    width: 500px;
+    width: 220px;
 }
 
+
+.filtertool form {
+    margin: 0;
+}

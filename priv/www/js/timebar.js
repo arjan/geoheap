@@ -11,8 +11,8 @@
             self.data = [];
             for (var i=0; i<300; i++)
                 self.data.push(100*Math.random());
-            self.timeStart = new Date("2012-01-01");
-            self.timeEnd = new Date("2012-02-01");
+            self.timeStart = new Date("2012-02-01");
+            self.timeEnd = new Date("2012-03-01");
 
             self.zoomlevel = 1;
             self.zoom = 1.0;
@@ -30,7 +30,7 @@
 
             self.setupLegend();
 
-            self.bracketTimer = self.idleTimer(500, self.bracketChanged);
+            self.bracketTimer = Util.IdleTimer(200, self.bracketChanged, self);
             self.setBracket(0.2, 0.8);
 
             self.refresh();
@@ -76,7 +76,8 @@
         },
 
         bracketChanged: function() {
-            console.log(1111);
+            var self = this;
+            Util.PubSub.publish('timebar-change', [self]);
         },
 
         setPan: function(pan) {
@@ -196,31 +197,6 @@
             self.legendRight = $("<span>")
                 .html("xx").appendTo(self.legend);
 
-        },
-
-        idleTimer: function (d, c)
-        {
-            return (function(delay, callback) {
-                        var timeout = null;
-                        var self = this;
-                        self.callback = callback;
-
-                        self.cancel = function ()
-                        {
-                            if (timeout)
-                            {
-                                clearTimeout(timeout);
-                                timeout = null;
-                            }
-                        };
-                        self.bump = function ()
-                        {
-                            self.cancel();
-                            timeout = setTimeout(function () {self.callback(); timeout = null; }, delay);
-                        };
-                        return self;
-            })(d, c);
         }
-    }
-);
+});
 })(jQuery);
