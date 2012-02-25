@@ -54,8 +54,10 @@ geoquery(Req) ->
     To = proplists:get_value(<<"to">>, All),
     Start = proplists:get_value(<<"start">>, All),
     End = proplists:get_value(<<"end">>, All),
-    Query = "*:*",
-    FQ = ["date:[", From, " TO ", To, "]"],
+    Q = proplists:get_value(<<"q">>, All, "*"),
+    Query = ["text:",Q],
+
+    FQ = ["{!tag=d}date:[", From, " TO ", To, "]"],
 
     Lat = proplists:get_value(<<"lat">>, All),
     Lon = proplists:get_value(<<"lon">>, All),
@@ -63,6 +65,12 @@ geoquery(Req) ->
     Raw = ["sfield=location&pt=", Lat, ",", Lon, "&d=", D],
 
     %%{ok, Opts, Docs, Extra} = esolr:search(Query, [{facet_date, "date", Start, End, "+1HOUR"}, {return, raw}]),
-    {ok, RawResponse} = esolr:search(Query, [{fq, FQ}, {fq, "{!bbox}"}, {raw, Raw}, {facet_date, "date", Start, End, "+1HOUR"}, {return, raw}]),
+    {ok, RawResponse} = esolr:search(Query, [
+                                             {rows, 2000},
+                                             {fq, FQ}, 
+                                             {fq, "{!bbox}"}, 
+                                             {raw, Raw}, 
+                                             {facet_date, "{!ex=d}date", Start, End, "+1HOUR"}, 
+                                             {return, raw}]),
     {RawResponse, Req1}.
 

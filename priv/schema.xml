@@ -73,7 +73,7 @@
         <!-- text fields -->
 
         <field name="text" type="text" indexed="true" stored="true" />
-        <field name="keywords" type="keywords" indexed="true" />
+        <field name="keywords" type="keywords" stored="false" indexed="true" />
         <field name="color" type="string" indexed="true" stored="true" multiValued="true" />
         
         <!-- all text, collected (copyfield) -->

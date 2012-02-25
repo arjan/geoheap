@@ -9,10 +9,10 @@
             self.subHeight = 20;
 
             self.data = [];
-            for (var i=0; i<300; i++)
-                self.data.push(100*Math.random());
-            self.timeStart = new Date("2012-02-01");
-            self.timeEnd = new Date("2012-03-01");
+//            for (var i=0; i<300; i++)
+//                self.data.push(100*Math.random());
+            self.timeStart = new Date("2012-02-22");
+            self.timeEnd = new Date((new Date()).getTime()+1000*3600);
 
             self.zoomlevel = 1;
             self.zoom = 1.0;
@@ -31,16 +31,29 @@
             self.setupLegend();
 
             self.bracketTimer = Util.IdleTimer(200, self.bracketChanged, self);
-            self.setBracket(0.2, 0.8);
+            self.setBracket(0.0, 1.0);
 
             self.refresh();
             self.setupDrag();
         },
 
+        setData: function(data) {
+            var self = this;
+            self.data = [];
+            for (var k in data)
+                self.data.push(data[k]);
+            self.refresh();
+        },
+
         refresh: function() {
             var self = this;
             var w = self.element.width();
-            self.sparkline.empty().sparkline(self.data, {height: self.barHeight, width: self.zoom * w});
+            //self.sparkline.empty().sparkline(self.data, {height: self.barHeight, width: self.zoom * w});
+            self.sparkline.empty().sparkline(self.data, {
+                                                 type: 'bar',
+                                                 barWidth: (self.zoom*w)/self.data.length - 1,
+                                                 barSpacing: 1,
+                                                 height: self.barHeight, width: self.zoom * w});
             //self.curtainLeft.css({width: self.bracket[0] * self.zoom * w});
             var rw = (1-self.bracket[1]) * self.zoom * w;
             //self.curtainRight.css({width: rw, left: self.zoom * w - rw});
