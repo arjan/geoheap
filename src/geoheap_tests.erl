@@ -53,10 +53,15 @@ tweet_test() ->
     ?assertEqual({<<"skatkat98">>}, bson:lookup(screenname, Doc2)),
 
     {doc, Solr} = geoheap_util:bson_to_solr(Doc2),
-    ?DEBUG(Solr),
 
     ?assertEqual("1d", proplists:get_value(geohash, Solr)),
     ok.
+
+instagram_test() ->
+    JSON = "{\"tags\":[],\"location\":{\"latitude\":35.646458072,\"name\":\"\u6075\u6bd4\u5bff\",\"longitude\":139.710001945,\"id\":5387540},\"comments\":{\"count\":0,\"data\":[]},\"filter\":\"Rise\",\"created_time\":\"1330205190\",\"link\":\"http:\/\/instagr.am\/p\/HcZSlJwChB\/\",\"likes\":{\"count\":0,\"data\":[]},\"images\":{\"low_resolution\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_6.jpg\",\"width\":306,\"height\":306},\"thumbnail\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_5.jpg\",\"width\":150,\"height\":150},\"standard_resolution\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_7.jpg\",\"width\":612,\"height\":612}},\"caption\":null,\"type\":\"image\",\"id\":\"134093316919666753_864105\",\"user\":{\"username\":\"source\",\"website\":\"\",\"bio\":\"dance as you want, all through the darkest night.\u00a02012.02.10(fri)\u00a0tanze@solfa\u00a0GENRE:TECHNO\/HOUSE\u00a0OPEN:22:00~\",\"profile_picture\":\"http:\/\/images.instagram.com\/profiles\/profile_864105_75sq_1327201896.jpg\",\"full_name\":\"tomohiro\",\"id\":\"864105\"}}",
+    ?DEBUG(geoheap_util:doc_from_instagram(geoheap_util:json_to_bson(JSON))),
+    ok.
+
     
 unicode_test() ->
     %% lager:info("~p~n", [xmerl_ucs:from_utf8("øfßðáfö³²’¥‘¤ë€í³’‘íëfßœðï¶fœøßð¶gø")]),

@@ -28,7 +28,9 @@ setup() ->
     Dispatch = [
                 {'_', [
                        {[], geoheap_web_index, []},
-                       {[<<"test">>], geoheap_web_json, [{callback, fun(Req) -> {{array, [1,2,3]}, Req} end}]},
+
+                       {[<<"instagram">>, <<"subscribe">>], epush_subscription_handler, []},
+
                        {[<<"query">>], geoheap_web_json, [{callback, fun geoheap_web:geoquery/1}, {return, raw}]},
                        {['...'], cowboy_http_static, [{directory, "priv/www"}, {mimetypes, mime()}]}
                       ]}
@@ -55,7 +57,7 @@ geoquery(Req) ->
     Start = proplists:get_value(<<"start">>, All),
     End = proplists:get_value(<<"end">>, All),
     Q = proplists:get_value(<<"q">>, All, "*"),
-    Query = ["text:",Q],
+    Query = ["*:",Q],
 
     FQ = ["{!tag=d}date:[", From, " TO ", To, "]"],
 

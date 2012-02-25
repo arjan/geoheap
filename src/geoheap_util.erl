@@ -25,7 +25,8 @@
          json_to_bson/1,
          bson_to_solr/1,
          to_utf8/1,
-         doc_from_tweet/1
+         doc_from_tweet/1,
+         doc_from_instagram/1
         ]).
 
 proplist_to_bson(List) ->
@@ -70,6 +71,34 @@ doc_from_tweet(Tweet) ->
     {ScreenName} = bson:lookup(screen_name, User),
     list_to_tuple([source, <<"twitter">>,
                    original, Tweet,
+                   location, Location,
+                   screenname, ScreenName,
+                   id, Id,
+                   text, Text,
+                   date, FormattedDate
+                  ]).
+
+doc_from_instagram(Instagram) ->
+    {Id} = bson:lookup(id, Instagram),
+    Text = case bson:lookup(text, Instagram) of
+               {} -> <<>>;
+               {T} -> T
+           end,
+    {Timestamp} = bson:lookup(created_time, Instagram),
+    Base = calendar:datetime_to_gregorian_seconds({{1970,1,1},{0,0,0}}),
+    Date = calendar:gregorian_seconds_to_datetime(Base + list_to_integer(binary_to_list(Timestamp))),
+    FormattedDate = list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date)),
+    Location = case bson:lookup(location, Instagram) of
+                   {} -> undefined;
+                   {Loc} -> 
+                       {Lat} = bson:lookup(latitude, Loc),
+                       {Lon} = bson:lookup(longitude, Loc),
+                       [Lon, Lat]
+               end,
+    {User} = bson:lookup(user, Instagram),
+    {ScreenName} = bson:lookup(username, User),
+    list_to_tuple([source, <<"instagram">>,
+                   original, Instagram,
                    location, Location,
                    screenname, ScreenName,
                    id, Id,

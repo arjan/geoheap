@@ -8,6 +8,10 @@
     width: 100%;
 }
 
+.do_timebar div.inner div.bars {
+    padding: 0 30px;
+}
+
 .do_timebar div.inner div,
 .do_timebar div.inner img,
 .do_timebar div.inner {
@@ -28,8 +32,8 @@ img.bracket-right {
 
 .do_timebar div.inner div.legend {
     width: 100%;
-    height: 40px;
-    top: 60px;
+    height: 36px;
+    top: 64px;
 }
 .do_timebar div.inner div.legend span {
     position: absolute;
@@ -78,7 +82,8 @@ html,body {height: 100%;}
     width: 220px;
 }
 
-
+.navbar form,
 .filtertool form {
     margin: 0;
 }
+

@@ -12,7 +12,11 @@
 //            for (var i=0; i<300; i++)
 //                self.data.push(100*Math.random());
             self.timeStart = new Date("2012-02-22");
-            self.timeEnd = new Date((new Date()).getTime()+1000*3600);
+            var now = (new Date()).getTime()/1000;
+            now = (now - now % 3600) + 3600;
+            self.timeEnd = new Date(now*1000);
+console.log(self.timeEnd.toTimeString());
+
 
             self.zoomlevel = 1;
             self.zoom = 1.0;
@@ -20,7 +24,7 @@
             
             self.inner = $("<div>").addClass("inner").appendTo(self.element);
                 
-            self.sparkline = $("<div>").appendTo(self.inner);
+            self.sparkline = $("<div>").addClass("bars").appendTo(self.inner);
 
 
             self.curtainLeft = $("<div>").addClass("curtain").appendTo(self.inner);
@@ -47,7 +51,8 @@
 
         refresh: function() {
             var self = this;
-            var w = self.element.width();
+            var w = self.element.width() - 2*self.bracketLeft.width();
+
             //self.sparkline.empty().sparkline(self.data, {height: self.barHeight, width: self.zoom * w});
             self.sparkline.empty().sparkline(self.data, {
                                                  type: 'bar',
@@ -68,24 +73,47 @@
                 else
                     left = right;
             }
-            var w = self.inner.width();
-            var d = self.bracketLeft.width()/w*.25;
-            left = Math.max(d, Math.min(1-d, left));
-            right = Math.max(d, Math.min(1-d, right));
+            var d = self.bracketLeft.width();
+            var w = self.inner.width()-2*d;
 
-            self.curtainLeft.css({width: left * w});
-            self.bracketLeft.css({left: left * w - self.bracketLeft.width()});
-            self.curtainRight.css({left: right * w, width: w - right * w});
-            self.bracketRight.css({left: right * w});
+            left = Math.max(0, Math.min(1, left));
+            right = Math.max(0, Math.min(1, right));
+
+            var n = (self.timeEnd.getTime()-self.timeStart.getTime()) / (1000*900);
+            left = Math.floor(left*n)/n;
+            right = Math.floor(right*n)/n;
+
+            self.curtainLeft.css({width: d+left * w});
+            self.bracketLeft.css({left: d+left * w - self.bracketLeft.width()});
+            self.curtainRight.css({left: d+right * w, width: w - right * w});
+            self.bracketRight.css({left: d+right * w});
             
             self.bracket = [left, right];
             self.bracketTimer.bump();
 
             var date = function(x) { return new Date(self.timeStart.getTime() + x * (self.timeEnd.getTime()-self.timeStart.getTime())); };
             self.timeLeft = date(left);
-            self.legendLeft.css({right: w - left*w}).html(Util.timebarDate(self.timeLeft));
+            self.legendLeft.html(Util.timebarDate(self.timeLeft));
+            if (left < 0.075) {
+                self.legendLeft
+                    .css({left: d})
+                    .removeClass("right"); 
+            } else {
+                self.legendLeft
+                    .css({right: Math.max(d+w-left*w, d+0.075*w)})
+                    .addClass("right"); 
+            }
             self.timeRight = date(right);
-            self.legendRight.css({left: right*w}).html(Util.timebarDate(self.timeRight));
+            self.legendRight.html(Util.timebarDate(self.timeRight));
+            if (right > 0.925) {
+                self.legendRight
+                    .css({right: d})            
+                    .addClass("right"); 
+            } else {
+                self.legendRight
+                    .css({left: d+right*w})            
+                    .removeClass("right"); 
+            }
         },
 
         bracketChanged: function() {
@@ -133,17 +161,15 @@
                                if (self.dragging) return;
                                var ox = e.pageX;
                                self.dragging = true;                               
+                               var start = self.bracket[0];
+                               var end = self.bracket[1];
                                $(document)
                                    .bind('mousemove.timebar', function(e) {
 
                                              var w = self.element.width();
-                                             var dx = (e.pageX - ox)/w;
-
-                                             //var w = self.element.width();
-                                             //var totalw = w * self.zoom - w;
-                                             //self.setPan(self.pan - 1/totalw * (e.pageX - ox));
-                                             self.setBracket(self.bracket[0]+dx, self.bracket[1]+dx);
-                                             ox = e.pageX;
+                                             var b1 = start + (e.pageX - ox)/w;
+                                             var b2 = end + (e.pageX - ox)/w;
+                                             self.setBracket(b1, b2);
                                          })
                                    .bind('mouseup.timebar', function() {
                                              $(this).unbind('mousemove.timebar');
@@ -157,14 +183,13 @@
                                e.preventDefault();
                                if (self.dragging) return;
                                var ox = e.pageX;
-                               self.dragging = true;                               
-
+                               self.dragging = true;           
+                               var start = self.bracket[0];
                                $(document)
                                    .bind('mousemove.timebar', function(e) {
                                              var w = self.element.width();
-                                             var dx = (e.pageX - ox)/w;
-                                             self.setBracket(self.bracket[0]+dx, self.bracket[1], true);
-                                             ox = e.pageX;
+                                             var b = start + (e.pageX - ox)/w;
+                                             self.setBracket(b, self.bracket[1], true);
                                          })
                                    .bind('mouseup.timebar', function(e) {
                                              $(this).unbind('mousemove.timebar');
@@ -178,12 +203,12 @@
                                if (self.dragging) return;
                                var ox = e.pageX;
                                self.dragging = true;
+                               var start = self.bracket[1];
                                $(document)
                                    .bind('mousemove.timebar', function(e) {
                                              var w = self.element.width();
-                                             var dx = (e.pageX - ox)/w;
-                                             self.setBracket(self.bracket[0], self.bracket[1]+dx, false);
-                                             ox = e.pageX;
+                                             var b = start + (e.pageX - ox)/w;
+                                             self.setBracket(self.bracket[0], b, false);
                                          })
                                    .bind('mouseup.timebar', function(e) {
                                              $(this).unbind('mousemove.timebar');
@@ -196,16 +221,15 @@
         setupLegend: function() {
             var self = this;
             self.legend = $("<div>").addClass("legend").appendTo(self.inner);
-
+            /*
             $("<span>")
                 .html(Util.timebarDate(self.timeStart)).appendTo(self.legend);
             $("<span>")
                 .addClass("right")
                 .css({right: 0})
                 .html(Util.timebarDate(self.timeEnd)).appendTo(self.legend);
-
+             */
             self.legendLeft = $("<span>")
-                .addClass("right")
                 .html("xx").appendTo(self.legend);
             self.legendRight = $("<span>")
                 .html("xx").appendTo(self.legend);
