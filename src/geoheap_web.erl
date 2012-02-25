@@ -29,7 +29,7 @@ setup() ->
                 {'_', [
                        {[], geoheap_web_index, []},
                        {[<<"test">>], geoheap_web_json, [{callback, fun(Req) -> {{array, [1,2,3]}, Req} end}]},
-                       {[<<"query">>], geoheap_web_json, [{callback, fun geoheap_web:geoquery/1}]},
+                       {[<<"query">>], geoheap_web_json, [{callback, fun geoheap_web:geoquery/1}, {return, raw}]},
                        {['...'], cowboy_http_static, [{directory, "priv/www"}, {mimetypes, mime()}]}
                       ]}
                ],
@@ -54,15 +54,15 @@ geoquery(Req) ->
     To = proplists:get_value(<<"to">>, All),
     Start = proplists:get_value(<<"start">>, All),
     End = proplists:get_value(<<"end">>, All),
-    Query = ["date:[", From, " TO ", To, "]"],
-?DEBUG(Query),
+    Query = "*:*",
+    FQ = ["date:[", From, " TO ", To, "]"],
 
-    {ok, Opts, Docs, Extra} = esolr:search(Query, [{facet_date, "date", Start, End, "+1HOUR"}]),
-?DEBUG(Opts),
+    Lat = proplists:get_value(<<"lat">>, All),
+    Lon = proplists:get_value(<<"lon">>, All),
+    D = proplists:get_value(<<"radius">>, All),
+    Raw = ["sfield=location&pt=", Lat, ",", Lon, "&d=", D],
 
-    ?DEBUG(length(Docs)),
-
-    %%{"facet_counts", Counts} = proplists:lookup("facet_counts", Extra),
-
-    {{array, [1,2,3,4,5,6,7]}, Req1}.
+    %%{ok, Opts, Docs, Extra} = esolr:search(Query, [{facet_date, "date", Start, End, "+1HOUR"}, {return, raw}]),
+    {ok, RawResponse} = esolr:search(Query, [{fq, FQ}, {fq, "{!bbox}"}, {raw, Raw}, {facet_date, "date", Start, End, "+1HOUR"}, {return, raw}]),
+    {RawResponse, Req1}.
 
