@@ -42,11 +42,9 @@
             <div class="navbar-inner">
                 <div class="container-fluid">
                     <a class="brand" href="/">Bijlmer Radar</a>
-                    <form class="pull-right form-inline">
-                        <input name="location" placeholder="Search a location..." />
+                    <form class="pull-right form-inline" id="location-form">
+                        <input id="location" placeholder="Search a location..." />
                         <button class="btn btn-primary" data-toggle="button">Go</button>
-
-                        <button class="btn" data-toggle="button">Toggle filterbar</button>
                     </form>
                 </div>
             </div>
@@ -61,7 +59,8 @@
         </div>
 
         <div class="widget filtertool">
-            <form>
+            <form id="filter-form">
+<!--
             <h3>Sources</h3>
 
             <div class="control-group">
@@ -74,15 +73,17 @@
                     </label>
                 </div>
             </div>
-
+-->
             <h3>Filter</h3>
             <div class="control-group">
                 <div class="controls">
-                    <input class="span3" type="text" placeholder="Search term or screenname...">
+                    <input class="span3" type="text" placeholder="Search term or screenname..." id="q" />
                 </div>
             </div>
             
             <button class="btn btn-primary">Apply</button>
+
+            <div id="stats"></div>
         </form>
     </div>
     </body>

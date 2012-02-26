@@ -21,13 +21,18 @@
 -module(geoheap_instagram).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
--define(SUBSCRIBE_URL, "https://api.instagram.com/v1/subscriptions/").
+-define(API_URL, "https://api.instagram.com/v1/").
 
 %% ------------------------------------------------------------------
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/0, t/0]).
+-export([start_link/0, 
+         subscribe/0,
+         subscribe/3,
+         fetch/1,
+         unsubscribe_all/0,
+         subscription_callback/1]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -43,7 +48,20 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-t() ->
+
+%% @doc Remove all subscriptions.
+unsubscribe_all() ->
+    {ok, ClientId} = application:get_env(geoheap, instagram_client_id),
+    {ok, Secret} = application:get_env(geoheap, instagram_client_secret),
+    Url = ?API_URL ++ "subscriptions?object=all&client_secret=" ++ Secret ++ "&client_id=" ++ ClientId,
+    httpc:request(delete, {Url, []}, [], []).
+
+
+subscribe() ->
+    subscribe(4.913635, 52.376829, 5000). %% amsterdam
+
+%% @doc Subscribe to a location.
+subscribe(Long, Lat, Radius) ->
     {ok, BaseURL} = application:get_env(geoheap, base_url),
     {ok, ClientId} = application:get_env(geoheap, instagram_client_id),
     {ok, Secret} = application:get_env(geoheap, instagram_client_secret),
@@ -51,26 +69,67 @@ t() ->
                      {client_secret, Secret},
                      {object, "geography"},
                      {aspect, "media"},
-                     {lat, "35.657872"},
-                     {lng, "139.70232"},
-                     {radius, "5000"}],
+                     {lat, lists:flatten(io_lib:format("~.7f", [Lat]))},
+                     {lng, lists:flatten(io_lib:format("~.7f", [Long]))},
+                     {radius, integer_to_list(Radius)}],
 
-    epush_client:subscribe(?SUBSCRIBE_URL, BaseURL ++ "instagram/subscribe", SubscribeArgs).
+    epush_client:subscribe(?API_URL ++ "subscriptions", BaseURL ++ "instagram/subscribe", SubscribeArgs).
+
+%% @doc Called by the pubsubhubub handler when there is data for us.
+subscription_callback(Body) ->
+    gen_server:cast(?SERVER, {subscription_callback, Body}).
+
+%% @doc fetch recent media for given object id
+fetch(ObjectId) ->
+    gen_server:call(?SERVER, {fetch, ObjectId}).
+
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
 init(Args) ->
+    unsubscribe_all(),
+    subscribe(4.913635, 52.376829, 5000), %% amsterdam center
+    subscribe(4.959254, 52.309619, 5000), %% bijlmer
+    subscribe(4.756479, 52.307611, 5000), %% schiphol
+    {ok, _StatzId} = statz:new(?MODULE),
     {ok, Args}.
+
+handle_call({fetch, ObjectId}, _From, State) ->
+    do_fetchitems(ObjectId),
+    {reply, ok, State};
 
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
+handle_cast({subscription_callback, Body}, State) ->
+    {array, Handlers} = mochijson:decode(Body),
+    [begin 
+         {"object_id", ObjectId} = proplists:lookup("object_id", Handler),
+         do_fetchitems(ObjectId) 
+     end || {struct, Handler} <- Handlers],
+    {noreply, State};
+
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
+handle_info({http, {_Ref, HttpResponse}}, State) ->
+    {{_, 200, _}, _Headers, Body} = HttpResponse,
+    {struct, P} = mochijson:decode(Body),
+    {array, All} = proplists:get_value("data", P),
+    [begin
+         BSON = geoheap_util:json_to_bson(J),
+         Doc = geoheap_util:doc_from_instagram(BSON),
+         geoheap_store:put(geoheap, Doc),
+         geoheap_indexer:put(Doc),
+         statz:incr(?MODULE)
+     end || J <- All],
+    lager:info("Instagram: updated ~p.~n", [length(All)]),
+    {noreply, State};
+
 handle_info(_Info, State) ->
+    lager:info("INFO!!! ~p~n", [_Info]),
     {noreply, State}.
 
 terminate(_Reason, _State) ->
@@ -83,3 +142,11 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
+do_fetchitems(ObjectId) ->
+    %% Schiet request in 
+    {ok, ClientId} = application:get_env(geoheap, instagram_client_id),
+    Url = ?API_URL ++ "geographies/" ++ ObjectId ++ "/media/recent?client_id=" ++ ClientId,
+    lager:info("SUBS!!! ~p~n", [Url]),
+    {ok,_RequestId} = httpc:request(get,{Url, []}, [], [{sync,false}]),
+    ok.
+    

@@ -29,8 +29,9 @@ setup() ->
                 {'_', [
                        {[], geoheap_web_index, []},
 
-                       {[<<"instagram">>, <<"subscribe">>], epush_subscription_handler, []},
-
+                       {[<<"instagram">>, <<"subscribe">>], epush_subscription_handler, 
+                        [{callback, fun geoheap_instagram:subscription_callback/1}]},
+                        
                        {[<<"query">>], geoheap_web_json, [{callback, fun geoheap_web:geoquery/1}, {return, raw}]},
                        {['...'], cowboy_http_static, [{directory, "priv/www"}, {mimetypes, mime()}]}
                       ]}
@@ -56,8 +57,11 @@ geoquery(Req) ->
     To = proplists:get_value(<<"to">>, All),
     Start = proplists:get_value(<<"start">>, All),
     End = proplists:get_value(<<"end">>, All),
-    Q = proplists:get_value(<<"q">>, All, "*"),
-    Query = ["*:",Q],
+    Query = case proplists:get_value(<<"q">>, All, <<>>) of
+                <<>> -> ["*:*"];
+                Q ->  Q
+            end,
+%%    Query = ["+source:instagram *:",Q],
 
     FQ = ["{!tag=d}date:[", From, " TO ", To, "]"],
 

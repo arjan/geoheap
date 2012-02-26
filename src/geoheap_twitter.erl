@@ -72,7 +72,7 @@ handle_info({http, {R, stream, <<"\n">>}}, State=#state{request_id=R}) ->
 
 handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_id=R}) ->
     try
-        BSON = geoheap_util:json_to_bson(Content),
+        BSON = geoheap_util:json_to_bson(mochijson:decode(Content)),
         Doc = geoheap_util:doc_from_tweet(BSON),
         geoheap_store:put(geoheap, Doc),
         geoheap_indexer:put(Doc),

@@ -54,7 +54,7 @@ bson_to_solr(Document) ->
     {doc, Props3}.
 
 json_to_bson(Json) ->
-    decode_json(mochijson:decode(Json)).
+    decode_json(Json).
 
 
 doc_from_tweet(Tweet) ->
@@ -93,14 +93,19 @@ doc_from_instagram(Instagram) ->
                    {Loc} -> 
                        {Lat} = bson:lookup(latitude, Loc),
                        {Lon} = bson:lookup(longitude, Loc),
-                       [Lon, Lat]
+                       [Lat, Lon]
                end,
     {User} = bson:lookup(user, Instagram),
     {ScreenName} = bson:lookup(username, User),
+
+    {Images} = bson:lookup(images, Instagram),
+    {Tn} = bson:lookup(thumbnail, Images),
+    {Thumbnail} = bson:lookup(url, Tn),
     list_to_tuple([source, <<"instagram">>,
                    original, Instagram,
                    location, Location,
                    screenname, ScreenName,
+                   thumbnail, Thumbnail,
                    id, Id,
                    text, Text,
                    date, FormattedDate

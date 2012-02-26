@@ -9,14 +9,10 @@
             self.subHeight = 20;
 
             self.data = [];
-//            for (var i=0; i<300; i++)
-//                self.data.push(100*Math.random());
-            self.timeStart = new Date("2012-02-22");
+            self.timeStart = new Date("2012-02-23");
             var now = (new Date()).getTime()/1000;
             now = (now - now % 3600) + 3600;
             self.timeEnd = new Date(now*1000);
-console.log(self.timeEnd.toTimeString());
-
 
             self.zoomlevel = 1;
             self.zoom = 1.0;
@@ -51,11 +47,18 @@ console.log(self.timeEnd.toTimeString());
 
         refresh: function() {
             var self = this;
+
+            // Set end time to next hour
+            var now = (new Date()).getTime()/1000;
+            now = (now - now % 3600) + 3600;
+            self.timeEnd = new Date(now*1000);
+            self.setBracket(self.bracket[0], self.bracket[1]); // update bracket times
+
             var w = self.element.width() - 2*self.bracketLeft.width();
 
             //self.sparkline.empty().sparkline(self.data, {height: self.barHeight, width: self.zoom * w});
             self.sparkline.empty().sparkline(self.data, {
-                                                 type: 'bar',
+//                                                 type: 'bar',
                                                  barWidth: (self.zoom*w)/self.data.length - 1,
                                                  barSpacing: 1,
                                                  height: self.barHeight, width: self.zoom * w});
@@ -89,10 +92,11 @@ console.log(self.timeEnd.toTimeString());
             self.bracketRight.css({left: d+right * w});
             
             self.bracket = [left, right];
-            self.bracketTimer.bump();
 
             var date = function(x) { return new Date(self.timeStart.getTime() + x * (self.timeEnd.getTime()-self.timeStart.getTime())); };
             self.timeLeft = date(left);
+            self.timeRight = date(right);
+
             self.legendLeft.html(Util.timebarDate(self.timeLeft));
             if (left < 0.075) {
                 self.legendLeft
@@ -103,7 +107,6 @@ console.log(self.timeEnd.toTimeString());
                     .css({right: Math.max(d+w-left*w, d+0.075*w)})
                     .addClass("right"); 
             }
-            self.timeRight = date(right);
             self.legendRight.html(Util.timebarDate(self.timeRight));
             if (right > 0.925) {
                 self.legendRight
@@ -170,6 +173,7 @@ console.log(self.timeEnd.toTimeString());
                                              var b1 = start + (e.pageX - ox)/w;
                                              var b2 = end + (e.pageX - ox)/w;
                                              self.setBracket(b1, b2);
+                                             self.bracketTimer.bump();
                                          })
                                    .bind('mouseup.timebar', function() {
                                              $(this).unbind('mousemove.timebar');
@@ -190,6 +194,7 @@ console.log(self.timeEnd.toTimeString());
                                              var w = self.element.width();
                                              var b = start + (e.pageX - ox)/w;
                                              self.setBracket(b, self.bracket[1], true);
+                                             self.bracketTimer.bump();
                                          })
                                    .bind('mouseup.timebar', function(e) {
                                              $(this).unbind('mousemove.timebar');
@@ -209,6 +214,7 @@ console.log(self.timeEnd.toTimeString());
                                              var w = self.element.width();
                                              var b = start + (e.pageX - ox)/w;
                                              self.setBracket(self.bracket[0], b, false);
+                                             self.bracketTimer.bump();
                                          })
                                    .bind('mouseup.timebar', function(e) {
                                              $(this).unbind('mousemove.timebar');

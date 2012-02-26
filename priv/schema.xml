@@ -68,6 +68,9 @@
 
         <field name="location" type="location" indexed="true" multiValued="false" stored="true" />
         <dynamicField name="*_coordinate"  type="double" indexed="true"  stored="false"/>
+
+        <field name="thumbnail" type="string" indexed="false" multiValued="false" />
+
         <field name="geohash" type="string" indexed="true" multiValued="true" />
         
         <!-- text fields -->
