@@ -89,10 +89,12 @@ fetch(ObjectId) ->
 %% ------------------------------------------------------------------
 
 init(Args) ->
+    %% Setup subscriptions according to application environment
     unsubscribe_all(),
-    subscribe(4.913635, 52.376829, 5000), %% amsterdam center
-    subscribe(4.959254, 52.309619, 5000), %% bijlmer
-    subscribe(4.756479, 52.307611, 5000), %% schiphol
+    {ok, Locations} = application:get_env(geoheap, instagram_locations),
+    [subscribe(Long, Lat, Radius) ||
+        {Long, Lat, Radius} <- Locations],
+
     {ok, _StatzId} = statz:new(?MODULE),
     {ok, Args}.
 
@@ -128,8 +130,8 @@ handle_info({http, {_Ref, HttpResponse}}, State) ->
     lager:info("Instagram: updated ~p.~n", [length(All)]),
     {noreply, State};
 
-handle_info(_Info, State) ->
-    lager:info("INFO!!! ~p~n", [_Info]),
+handle_info(Info, State) ->
+    lager:info("instagram: Unhandled info message: ~p~n", [Info]),
     {noreply, State}.
 
 terminate(_Reason, _State) ->
@@ -146,7 +148,6 @@ do_fetchitems(ObjectId) ->
     %% Schiet request in 
     {ok, ClientId} = application:get_env(geoheap, instagram_client_id),
     Url = ?API_URL ++ "geographies/" ++ ObjectId ++ "/media/recent?client_id=" ++ ClientId,
-    lager:info("SUBS!!! ~p~n", [Url]),
     {ok,_RequestId} = httpc:request(get,{Url, []}, [], [{sync,false}]),
     ok.
     

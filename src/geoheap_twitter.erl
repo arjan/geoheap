@@ -107,14 +107,9 @@ reconnect(State) ->
 
     {ok, Login} = application:get_env(geoheap, twitter_username),
     {ok, Password} = application:get_env(geoheap, twitter_password),
+    {ok, Body} = application:get_env(geoheap, twitter_apifilter),
+
     URL = "https://" ++ Login ++ ":" ++ Password ++ "@stream.twitter.com/1/statuses/filter.json",
-    %Body = "locations=-180,-90,180,90", % whole world
-    %Body = "locations=50.79,3.76,53.38,7.11", % NL
-    %Body = "locations=3.762817,50.790195,7.113647,53.388134", % NL
-    Body = "locations=3.762817,50.790195,7.113647,53.388134&track=radar", % NL
-    %Body = "track=nederland",
-    %%Body = "track=instagram",
-    %%Body = "locations=-122.75,36.8,-121.75,37.8,-74,40,-73,41", % ny + la
     {ok, RequestId} = httpc:request(post,
                                     {URL, [], "application/x-www-form-urlencoded", Body},
                                     [],
