@@ -1,3 +1,8 @@
+/**
+ * Map functionality. This file should be refactored, currently it is
+ * a bunch of functionality thrown together without much coherence.
+ */
+
 $(function()
 {
     $(".do_timebar:first").timebar();
@@ -43,7 +48,7 @@ $(function()
         var srct = $("#src-twitter:checked").length > 0;
         var sources = (srci != srct) ? ("+source:"+(srci ? "instagram":"twitter")+" ") : "";
         var v = $("#q").val().trim();
-        var txt = v ? (" +text:"+v) : "";
+        var txt = v ? (" +alltext:"+v) : "";
         var args = {'from': Util.ISODateString(timebar.timeLeft), 
                     'to': Util.ISODateString(timebar.timeRight),
                     'start': Util.ISODateString(timebar.timeStart),
