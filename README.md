@@ -1,10 +1,10 @@
-Geohub
-======
+Geoheap
+=======
 
-Geohub is a "hub" for the aggregation of social location-based
-services. Currently it supports collecting tweets from Twitter (using
-Twitter's streaming HTTP API) and images from Instagram (using
-pubsubhubbub).
+Geoheap is an aggregator and visualization tool for social
+location-based services. Currently it supports collecting tweets from
+Twitter (using Twitter's streaming HTTP API) and images from Instagram
+(using pubsubhubbub).
 
 This project is much a work in progress, but feel free to look
 around. It has the following dependencies:
