@@ -47,8 +47,9 @@ start_link() ->
 ping() ->
     gen_server:call(?MODULE, ping).
 
+-spec put(atom(), any()) -> {ok, Id::integer()}.
 put(Collection, Document) ->
-    gen_server:cast(?MODULE, {put, Collection, Document}).
+    gen_server:call(?MODULE, {put, Collection, Document}).
 
 %%====================================================================
 %% gen_server callbacks
@@ -68,17 +69,18 @@ handle_call(ping, _From, State) ->
 
 
 %% @doc Trap unknown calls
+handle_call({put, Collection, Document}, _From, State) ->
+    {ok, {Id}} = mongo:do(safe, master, State#state.conn, State#state.db,
+                 fun() ->
+                         mongo:insert(Collection, Document)
+                 end),
+    {reply, {ok, Id}, State};
+
+%% @doc Trap unknown calls
 handle_call(Message, _From, State) ->
     {stop, {unknown_call, Message}, State}.
 
 
-%% @doc Trap unknown calls
-handle_cast({put, Collection, Document}, State) ->
-    {ok, _} = mongo:do(safe, master, State#state.conn, State#state.db,
-                       fun() ->
-                               mongo:insert(Collection, Document)
-                       end),
-    {noreply, State};
 
 %% @doc Trap unknown casts
 handle_cast(Message, State) ->

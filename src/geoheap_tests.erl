@@ -34,7 +34,7 @@ util_test() ->
     ok.
 
 util2_test() ->
-    ?assertEqual({doc, [{id, <<"foo">>}]}, geoheap_util:bson_to_solr({id, <<"foo">>})).
+    ?assertEqual({doc, [{id, <<"foo">>}, {store_id, <<1>>}]}, geoheap_util:bson_to_solr(<<1>>, {id, <<"foo">>})).
 
 tweet_test() ->
     Tweet = {in_reply_to_user_id_str,<<"158314798">>,geo,null,text,<<"@Real_Liam_Payne I love you so, please follow the102">>,retweeted,false,in_reply_to_screen_name,<<"Real_Liam_Payne">>,in_reply_to_user_id,158314798,in_reply_to_status_id,null,contributors,null,truncated,false,source,<<"web">>,created_at,<<"Tue Feb 21 15:34:43 +0000 2012">>,entities,{user_mentions,[{indices,[0,16],screen_name,<<"Real_Liam_Payne">>,id_str,<<"158314798">>,name,<<"Liam Payne">>,id,158314798}],hashtags,[],urls,[]},retweet_count,0,id_str,<<"171981182903394304">>,place,{place_type,<<"country">>,url,<<"http://api.twitter.com/1/geo/id/682c5a667856ef42.json">>,country_code,<<"TR">>,attributes,{},full_name,<<"Turkey">>,name,<<"Turkey">>,id,<<"682c5a667856ef42">>,country,<<"Turkey">>,bounding_box,{type,<<"Polygon">>,coordinates,[[[25.663883,35.817497],[44.822762,35.817497],[44.822762,42.109993],[25.663883,42.109993]]]}},coordinates,null,in_reply_to_status_id_str,null,user,{favourites_count,13,profile_background_color,<<"141113">>,profile_background_tile,true,profile_background_image_url_https,<<"https://si0.twimg.com/profile_background_images/420541079/cats.jpg">>,profile_sidebar_fill_color,<<"efefef">>,profile_image_url_https,<<"https://si0.twimg.com/profile_images/1822030035/li_normal.jpg">>,contributors_enabled,false,description,<<"Directioner:) LiamPayneHarryStylesLouisTomlinsonZaynMalikNiallHoran OneDirection ">>,listed_count,0,profile_sidebar_border_color,<<"eeeeee">>,is_translator,false,notifications,null,created_at,<<"Sun Jan 08 07:24:22 +0000 2012">>,friends_count,574,screen_name,<<"GozdeOzezgi">>,default_profile,false,show_all_inline_media,false,lang,<<"tr">>,profile_use_background_image,true,url,null,id_str,<<"458157278">>,follow_request_sent,null,statuses_count,243,profile_text_color,<<"333333">>,protected,false,profile_background_image_url,<<"http://a2.twimg.com/profile_background_images/420541079/cats.jpg">>,time_zone,<<"Greenland">>,followers_count,165,profile_image_url,<<"http://a0.twimg.com/profile_images/1822030035/li_normal.jpg">>,name,<<71,195,182,122,100,101,32,40,79,110,101,68,105,114,101,99,116,105,111,110,41>>,following,null,geo_enabled,true,profile_link_color,<<"009999">>,location,<<>>,id,458157278,default_profile_image,false,verified,false,utc_offset,-10800},id,171981182903394304,favorited,false},
@@ -52,7 +52,7 @@ tweet_test() ->
     ?assertEqual({[42.13137262,-80.07763525]}, bson:lookup(location, Doc2)),
     ?assertEqual({<<"skatkat98">>}, bson:lookup(screenname, Doc2)),
 
-    {doc, Solr} = geoheap_util:bson_to_solr(Doc2),
+    {doc, Solr} = geoheap_util:bson_to_solr(<<1,3,23,32>>, Doc2),
 
     ?assertEqual("1d", proplists:get_value(geohash, Solr)),
     ok.

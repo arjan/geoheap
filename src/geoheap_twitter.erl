@@ -74,8 +74,8 @@ handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_
     try
         BSON = geoheap_util:json_to_bson(mochijson:decode(Content)),
         Doc = geoheap_util:doc_from_tweet(BSON),
-        geoheap_store:put(geoheap, Doc),
-        geoheap_indexer:put(Doc),
+        {ok, Id} = geoheap_store:put(geoheap, Doc),
+        geoheap_indexer:put(Id, Doc),
         statz:incr(?MODULE)
     catch
         _:{badmatch,{}} -> nop;
@@ -110,7 +110,8 @@ reconnect(State) ->
     URL = "https://" ++ Login ++ ":" ++ Password ++ "@stream.twitter.com/1/statuses/filter.json",
     %Body = "locations=-180,-90,180,90", % whole world
     %Body = "locations=50.79,3.76,53.38,7.11", % NL
-    Body = "locations=3.762817,50.790195,7.113647,53.388134", % NL
+    %Body = "locations=3.762817,50.790195,7.113647,53.388134", % NL
+    Body = "locations=3.762817,50.790195,7.113647,53.388134&track=radar", % NL
     %Body = "track=nederland",
     %%Body = "track=instagram",
     %%Body = "locations=-122.75,36.8,-121.75,37.8,-74,40,-73,41", % ny + la

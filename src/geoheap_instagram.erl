@@ -121,8 +121,8 @@ handle_info({http, {_Ref, HttpResponse}}, State) ->
     [begin
          BSON = geoheap_util:json_to_bson(J),
          Doc = geoheap_util:doc_from_instagram(BSON),
-         geoheap_store:put(geoheap, Doc),
-         geoheap_indexer:put(Doc),
+         {ok, Id} = geoheap_store:put(geoheap, Doc),
+         geoheap_indexer:put(Id, Doc),
          statz:incr(?MODULE)
      end || J <- All],
     lager:info("Instagram: updated ~p.~n", [length(All)]),

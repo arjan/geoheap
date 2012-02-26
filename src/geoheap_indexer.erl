@@ -10,7 +10,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/0, put/1]).
+-export([start_link/0, put/2]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -26,8 +26,8 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-put(Document) ->
-    gen_server:cast(?SERVER, {put, Document}),
+put(Id, Document) ->
+    gen_server:cast(?SERVER, {put, Id, Document}),
     ok.
 
 %% ------------------------------------------------------------------
@@ -40,8 +40,8 @@ init(_Args) ->
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
-handle_cast({put, Document}, State=#state{pending=P}) ->
-    State1 = State#state{pending=[geoheap_util:bson_to_solr(Document)|P]},
+handle_cast({put, Id, Document}, State=#state{pending=P}) ->
+    State1 = State#state{pending=[geoheap_util:bson_to_solr(Id, Document)|P]},
     State2 = case length(State1#state.pending) >= ?COMMIT_MAXCOUNT of
                  true ->
                      commit(State1);

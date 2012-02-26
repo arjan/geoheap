@@ -23,7 +23,7 @@
 
 -export([proplist_to_bson/1,
          json_to_bson/1,
-         bson_to_solr/1,
+         bson_to_solr/2,
          to_utf8/1,
          doc_from_tweet/1,
          doc_from_instagram/1
@@ -33,7 +33,7 @@ proplist_to_bson(List) ->
     list_to_tuple(
       lists:foldr(fun({K,V}, Acc) -> [K, V | Acc] end, [], List)).
 
-bson_to_solr(Document) ->
+bson_to_solr(Id, Document) ->
     Props1 = bson:fields(Document),
     Location = case proplists:get_value(location, Props1) of
                    undefined -> [];
@@ -50,7 +50,7 @@ bson_to_solr(Document) ->
     Props2 = proplists:delete(original,
                               proplists:delete(location,
                                                Props1)),
-    Props3 = Location ++ Props2,
+    Props3 = Location ++ Props2 ++ [{store_id, base64:encode(Id)}],
     {doc, Props3}.
 
 json_to_bson(Json) ->
