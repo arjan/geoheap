@@ -9,6 +9,7 @@
             self.subHeight = 20;
 
             self.data = [];
+
             self.timeStart = new Date("2012-02-23");
             var now = (new Date()).getTime()/1000;
             now = (now - now % 3600) + 3600;
@@ -58,7 +59,7 @@
 
             //self.sparkline.empty().sparkline(self.data, {height: self.barHeight, width: self.zoom * w});
             self.sparkline.empty().sparkline(self.data, {
-//                                                 type: 'bar',
+                                                 type: 'bar',
                                                  barWidth: (self.zoom*w)/self.data.length - 1,
                                                  barSpacing: 1,
                                                  height: self.barHeight, width: self.zoom * w});

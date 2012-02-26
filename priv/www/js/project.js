@@ -11,8 +11,23 @@ $(function()
     var map = new google.maps.Map(document.getElementById("map"),
                                   myOptions);
 
+    var infowindow = new google.maps.InfoWindow({disableAutoPan: true});
+
+    function showInfoWindow(el)
+    {
+        var html = "";
+        html += "<p>" + el.screenname + " @ " + el.date + "</p>";
+        if (el.thumbnail) html +="<p style=\"height:150px\"><img src=\""+el.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
+        if (el.text) html +="<p><strong>"+el.text+"</strong></p>";
+        infowindow.setContent(html);
+        infowindow.setPosition(el.pos);
+        infowindow.open(map);
+    }
+    google.maps.event.addListener(map, 'click', function(){infowindow.close();});
+
     var allmarkers = {};
     var loading = false;
+
 
     function loadData()
     {
@@ -24,6 +39,11 @@ $(function()
         var c = b.getCenter();
         var r = google.maps.geometry.spherical.computeDistanceBetween(b.getSouthWest(), c);
 
+        var srci = $("#src-instagram:checked").length > 0;
+        var srct = $("#src-twitter:checked").length > 0;
+        var sources = (srci != srct) ? ("+source:"+(srci ? "instagram":"twitter")+" ") : "";
+        var v = $("#q").val().trim();
+        var txt = v ? (" +text:"+v) : "";
         var args = {'from': Util.ISODateString(timebar.timeLeft), 
                     'to': Util.ISODateString(timebar.timeRight),
                     'start': Util.ISODateString(timebar.timeStart),
@@ -31,7 +51,7 @@ $(function()
                     'lat': c.lat(),
                     'lon': c.lng(),
                     'radius': Math.ceil(r/1000),
-                    'q': $("#q").val()
+                    'q': sources + txt
                    };
 
         $.ajax({url: '/query?' + $.param(args),
@@ -46,6 +66,9 @@ $(function()
 
                     var hit = {};
                     var numnew = 0;
+                    var lastnew = null;
+                    var lastnewdist = null;
+
                     $(r.response.docs).each(function() {
                                                 var el = this;
                                                 hit[el.id] = true;
@@ -54,21 +77,29 @@ $(function()
                                                     return;
                                                 }
                                                 var s = el.location.split(",");
-                                                var pos = new google.maps.LatLng(parseFloat(s[0]), parseFloat(s[1]));
+                                                el.pos = new google.maps.LatLng(parseFloat(s[0]), parseFloat(s[1]));
                                                 var icon = el.source == "twitter" ? "/img/blue.png" : "/img/red.png";
                                                 var m = new google.maps.Marker({
-                                                                                   position: pos,
+                                                                                   position: el.pos,
                                                                                    title: el.screenname + " @ " + el.date + ": " + el.text,
                                                                                    icon: icon
                                                                                });
+                                                google.maps.event.addListener(m, 'click', function(){showInfoWindow(el);});
+
                                                 numnew++;
-                                                if (numnew < 20)
+                                                if (numnew < 20) {
                                                     m.setAnimation(google.maps.Animation.DROP);
+                                                    var r = google.maps.geometry.spherical.computeDistanceBetween(el.pos, c);
+                                                    if (lastnewdist === null || r < lastnewdist)
+                                                        lastnew = el;
+                                                }
 
                                                 allmarkers[el.id] = m;
                                                 m.setMap(map);
                                             });
                     for (var id in allmarkers) if (!hit[id]) allmarkers[id].setVisible(false);
+                    if (lastnew) 
+                        showInfoWindow(lastnew);
                     loading = false;
                 }
                });
