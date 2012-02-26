@@ -29,7 +29,7 @@ Then copy `sample.config` to `prod.config` and change its contents to
 match your API credentials. Then run the aggregator as follows:
 
 ```
-erl -pa ebin deps/*/ebin -boot start_sasl -config prod geoheap
+erl -pa ebin deps/*/ebin -boot start_sasl -config prod -s geoheap
 ```
 
 A single-core Solr (>= 3.4) needs to be listening on its default port

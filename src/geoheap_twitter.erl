@@ -38,7 +38,7 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
          terminate/2, code_change/3]).
 
--record(state, {request_id, statz_id}).
+-record(state, {request_id, statz_id, backoff=1}).
 
 %% ------------------------------------------------------------------
 %% API Function Definitions
@@ -83,10 +83,16 @@ handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_
             lager:error("~p: ~p~n", [E, Content]),
             ok
     end,
-    {noreply, State};
+    {noreply, State#state{backoff=1}}; % mark success
+
+handle_info({http, {R, stream_end, _Headers}}, State=#state{request_id=R, backoff=B}) ->
+    lager:info("Stream end. Retrying after a while..."),
+    timer:sleep(B*10),
+    {noreply, reconnect(State#state{backoff=2*B})};
 
 handle_info({http,{R,{error,socket_closed_remotely}}}, State=#state{request_id=R}) ->
     {noreply, reconnect(State)};
+
 
 handle_info(Info, State) ->
     lager:info("twitter: Unhandled message: ~p~n", [Info]),
