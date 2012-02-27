@@ -37,6 +37,7 @@ $(function()
     function loadData()
     {
         if (loading) return;
+        $(".barContainer").mask("Please wait...");
         loading = true;
 
         var b = map.getBounds();
@@ -107,6 +108,7 @@ $(function()
                     for (var id in allmarkers) if (!hit[id]) allmarkers[id].setVisible(false);
                     if (lastnew) 
                         showInfoWindow(lastnew);
+                    $(".barContainer").unmask();
                     loading = false;
                 }
                });

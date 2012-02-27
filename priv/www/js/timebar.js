@@ -157,9 +157,6 @@
             var self = this;
 
             self.element            
-                .mousewheel(function(e, delta) {
-                                self.setZoom(self.zoomlevel + delta, e.pageX - self.element.offset().left);
-                            })
                 .mousedown(function(e) {
                                e.preventDefault();
                                if (self.dragging) return;

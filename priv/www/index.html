@@ -16,6 +16,7 @@
 
         <!-- Le styles -->
         <link href="/css/bootstrap.min.css" type="text/css" media="all" rel="stylesheet"/>
+        <link href="/css/jquery.loadmask.css" type="text/css" media="all" rel="stylesheet"/>
         <link href="/css/project.css" type="text/css" media="all" rel="stylesheet"/>
 
         <!-- Le fav and touch icons -->
@@ -28,7 +29,7 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
         <script src="/js/jquery.sparkline.min.js"></script>
-        <script src="/js/jquery.mousewheel.min.js"></script>
+        <script src="/js/jquery.loadmask.min.js"></script>
 
         <script src="/js/util.js"></script>
         <script src="/js/timebar.js"></script>
@@ -38,6 +39,9 @@
     </head>
 
     <body>
+        <div id="map">
+        </div>
+
         <div class="navbar">
             <div class="navbar-inner">
                 <div class="container-fluid">
@@ -48,9 +52,6 @@
                     </form>
                 </div>
             </div>
-        </div>
-
-        <div id="map">
         </div>
 
         <div class="widget barContainer">

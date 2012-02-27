@@ -67,9 +67,9 @@ html,body {height: 100%; overflow: hidden;}
 
 .widget {
     background: white;
-    border-radius: 1px;
     position: absolute;
     padding: 10px;
+    border-radius: 1px;
     box-shadow: 4px 4px 4px rgba(0,0,0,0.5);
 }
 
@@ -95,4 +95,3 @@ html,body {height: 100%; overflow: hidden;}
 .filtertool form {
     margin: 0;
 }
-
