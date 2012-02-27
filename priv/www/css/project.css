@@ -52,7 +52,7 @@ img.bracket-right {
     height: 100px;
 }
 
-html,body {height: 100%;}
+html,body {height: 100%; overflow: hidden;}
 #map {
     width: 100%;
     height: 100%;
@@ -63,28 +63,30 @@ html,body {height: 100%;}
 
 .widget {
     background: white;
-    border-radius: 5px;
+    border-radius: 1px;
     position: absolute;
     padding: 10px;
     box-shadow: 4px 4px 4px rgba(0,0,0,0.5);
 }
 
 
-
 .barContainer {
     padding-bottom: 0;
-    right: 2em;
-    left: 2em;
+    right: 7px;
+    left: 7px;
     margin: auto;
-    bottom: 2em;
+    bottom: 7px;
 }
 
 .filtertool {
-    top: 5em;
-    right: 2em;
+    bottom: 128px;
+    right: 7px;
     width: 220px;
 }
 
+.navbar {
+    margin: 0;
+}
 .navbar form,
 .filtertool form {
     margin: 0;

@@ -42,7 +42,9 @@ $(function()
         var b = map.getBounds();
         
         var c = b.getCenter();
-        var r = google.maps.geometry.spherical.computeDistanceBetween(b.getSouthWest(), c);
+        var r = google.maps.geometry.spherical.computeDistanceBetween(
+            new google.maps.LatLng(c.lat(), b.getSouthWest().lng()),
+            c);
 
         var srci = $("#src-instagram:checked").length > 0;
         var srct = $("#src-twitter:checked").length > 0;
