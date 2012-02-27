@@ -64,7 +64,7 @@ $(function()
         $.ajax({url: '/query?' + $.param(args),
                 success: function(r) {
                     var html = "";
-                    html += "<p>Results: " + r.response.numFound;
+                    html += "<div>Results: " + r.response.numFound + "</div>";
                     $("#stats").html(html);
 
                     var data = r.facet_counts.facet_dates.date;

@@ -49,7 +49,11 @@ img.bracket-right {
 
 .timebar {
     width: 100%;
-    height: 100px;
+    height: 80px;
+}
+
+#stats {
+    margin-top: 10px;
 }
 
 html,body {height: 100%; overflow: hidden;}
