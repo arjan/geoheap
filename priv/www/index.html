@@ -16,7 +16,6 @@
 
         <!-- Le styles -->
         <link href="/css/bootstrap.min.css" type="text/css" media="all" rel="stylesheet"/>
-        <link href="/css/jquery.loadmask.css" type="text/css" media="all" rel="stylesheet"/>
         <link href="/css/project.css" type="text/css" media="all" rel="stylesheet"/>
 
         <!-- Le fav and touch icons -->
@@ -29,7 +28,6 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
         <script src="/js/jquery.sparkline.min.js"></script>
-        <script src="/js/jquery.loadmask.min.js"></script>
 
         <script src="/js/util.js"></script>
         <script src="/js/timebar.js"></script>
@@ -61,7 +59,7 @@
 
         <div class="widget filtertool">
             <form id="filter-form">
-
+                <img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
             <h3>Filter</h3>
             <div class="control-group">
                 <div class="controls">

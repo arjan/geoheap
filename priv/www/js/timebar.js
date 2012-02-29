@@ -10,7 +10,8 @@
 
             self.data = [];
 
-            self.timeStart = new Date("2012-02-23");
+            self.timeStart = new Date("2012-02-25");
+            self.timeStart.setHours(9);
             var now = (new Date()).getTime()/1000;
             now = (now - now % 3600) + 3600;
             self.timeEnd = new Date(now*1000);
