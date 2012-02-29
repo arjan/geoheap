@@ -10,11 +10,11 @@ start() ->
     geoheap:start().
 
 
-app_test() ->
+app_xtest() ->
     start(),
     ?assert(whereis(geoheap_sup) =/= undefined).
 
-store_ok_test() ->
+store_ok_xtest() ->
     start(),
     geoheap_store:put(test, {value, <<"bar">>}),
     ?assertEqual(pong, geoheap_store:ping()).
@@ -34,7 +34,7 @@ util_test() ->
     ok.
 
 util2_test() ->
-    ?assertEqual({doc, [{id, <<"foo">>}, {store_id, <<1>>}]}, geoheap_util:bson_to_solr(<<1>>, {id, <<"foo">>})).
+    ?assertEqual({doc, [{id, <<"foo">>}, {store_id, base64:encode(<<1>>)}]}, geoheap_util:bson_to_solr(<<1>>, {id, <<"foo">>})).
 
 tweet_test() ->
     Tweet = {in_reply_to_user_id_str,<<"158314798">>,geo,null,text,<<"@Real_Liam_Payne I love you so, please follow the102">>,retweeted,false,in_reply_to_screen_name,<<"Real_Liam_Payne">>,in_reply_to_user_id,158314798,in_reply_to_status_id,null,contributors,null,truncated,false,source,<<"web">>,created_at,<<"Tue Feb 21 15:34:43 +0000 2012">>,entities,{user_mentions,[{indices,[0,16],screen_name,<<"Real_Liam_Payne">>,id_str,<<"158314798">>,name,<<"Liam Payne">>,id,158314798}],hashtags,[],urls,[]},retweet_count,0,id_str,<<"171981182903394304">>,place,{place_type,<<"country">>,url,<<"http://api.twitter.com/1/geo/id/682c5a667856ef42.json">>,country_code,<<"TR">>,attributes,{},full_name,<<"Turkey">>,name,<<"Turkey">>,id,<<"682c5a667856ef42">>,country,<<"Turkey">>,bounding_box,{type,<<"Polygon">>,coordinates,[[[25.663883,35.817497],[44.822762,35.817497],[44.822762,42.109993],[25.663883,42.109993]]]}},coordinates,null,in_reply_to_status_id_str,null,user,{favourites_count,13,profile_background_color,<<"141113">>,profile_background_tile,true,profile_background_image_url_https,<<"https://si0.twimg.com/profile_background_images/420541079/cats.jpg">>,profile_sidebar_fill_color,<<"efefef">>,profile_image_url_https,<<"https://si0.twimg.com/profile_images/1822030035/li_normal.jpg">>,contributors_enabled,false,description,<<"Directioner:) LiamPayneHarryStylesLouisTomlinsonZaynMalikNiallHoran OneDirection ">>,listed_count,0,profile_sidebar_border_color,<<"eeeeee">>,is_translator,false,notifications,null,created_at,<<"Sun Jan 08 07:24:22 +0000 2012">>,friends_count,574,screen_name,<<"GozdeOzezgi">>,default_profile,false,show_all_inline_media,false,lang,<<"tr">>,profile_use_background_image,true,url,null,id_str,<<"458157278">>,follow_request_sent,null,statuses_count,243,profile_text_color,<<"333333">>,protected,false,profile_background_image_url,<<"http://a2.twimg.com/profile_background_images/420541079/cats.jpg">>,time_zone,<<"Greenland">>,followers_count,165,profile_image_url,<<"http://a0.twimg.com/profile_images/1822030035/li_normal.jpg">>,name,<<71,195,182,122,100,101,32,40,79,110,101,68,105,114,101,99,116,105,111,110,41>>,following,null,geo_enabled,true,profile_link_color,<<"009999">>,location,<<>>,id,458157278,default_profile_image,false,verified,false,utc_offset,-10800},id,171981182903394304,favorited,false},
@@ -58,10 +58,13 @@ tweet_test() ->
     ok.
 
 instagram_test() ->
-    JSON = "{\"tags\":[],\"location\":{\"latitude\":35.646458072,\"name\":\"\u6075\u6bd4\u5bff\",\"longitude\":139.710001945,\"id\":5387540},\"comments\":{\"count\":0,\"data\":[]},\"filter\":\"Rise\",\"created_time\":\"1330205190\",\"link\":\"http:\/\/instagr.am\/p\/HcZSlJwChB\/\",\"likes\":{\"count\":0,\"data\":[]},\"images\":{\"low_resolution\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_6.jpg\",\"width\":306,\"height\":306},\"thumbnail\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_5.jpg\",\"width\":150,\"height\":150},\"standard_resolution\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_7.jpg\",\"width\":612,\"height\":612}},\"caption\":null,\"type\":\"image\",\"id\":\"134093316919666753_864105\",\"user\":{\"username\":\"source\",\"website\":\"\",\"bio\":\"dance as you want, all through the darkest night.\u00a02012.02.10(fri)\u00a0tanze@solfa\u00a0GENRE:TECHNO\/HOUSE\u00a0OPEN:22:00~\",\"profile_picture\":\"http:\/\/images.instagram.com\/profiles\/profile_864105_75sq_1327201896.jpg\",\"full_name\":\"tomohiro\",\"id\":\"864105\"}}",
+    JSON = "{\"tags\":[\"foo\",\"bar\"],\"location\":{\"latitude\":35.646458072,\"name\":\"\u6075\u6bd4\u5bff\",\"longitude\":139.710001945,\"id\":5387540},\"comments\":{\"count\":0,\"data\":[]},\"filter\":\"Rise\",\"created_time\":\"1330205190\",\"link\":\"http:\/\/instagr.am\/p\/HcZSlJwChB\/\",\"likes\":{\"count\":0,\"data\":[]},\"images\":{\"low_resolution\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_6.jpg\",\"width\":306,\"height\":306},\"thumbnail\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_5.jpg\",\"width\":150,\"height\":150},\"standard_resolution\":{\"url\":\"http:\/\/distilleryimage1.instagram.com\/623df26a5ff711e19896123138142014_7.jpg\",\"width\":612,\"height\":612}},\"caption\":{\"text\":\"Bleh\"},\"type\":\"image\",\"id\":\"134093316919666753_864105\",\"user\":{\"username\":\"source\",\"website\":\"\",\"bio\":\"dance as you want, all through the darkest night.\u00a02012.02.10(fri)\u00a0tanze@solfa\u00a0GENRE:TECHNO\/HOUSE\u00a0OPEN:22:00~\",\"profile_picture\":\"http:\/\/images.instagram.com\/profiles\/profile_864105_75sq_1327201896.jpg\",\"full_name\":\"tomohiro\",\"id\":\"864105\"}}",
     Doc = geoheap_util:doc_from_instagram(geoheap_util:json_to_bson(mochijson:decode(JSON))),
 
     ?assertEqual({<<"http://distilleryimage1.instagram.com/623df26a5ff711e19896123138142014_5.jpg">>}, bson:lookup(thumbnail, Doc)),
+    ?assertEqual({<<"Bleh">>}, bson:lookup(text, Doc)),
+    ?assertEqual({<<"foo">>}, bson:lookup(tags, Doc)),
+
     ok.
 
     

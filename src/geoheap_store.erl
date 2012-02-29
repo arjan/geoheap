@@ -30,7 +30,8 @@
 %% interface functions
 -export([
          ping/0,
-         put/2
+         put/2,
+         lookup/2
 ]).
 
 -record(state, {db, conn}).
@@ -50,6 +51,10 @@ ping() ->
 -spec put(atom(), any()) -> {ok, Id::integer()}.
 put(Collection, Document) ->
     gen_server:call(?MODULE, {put, Collection, Document}).
+
+lookup(Collection, Id) ->
+    gen_server:call(?MODULE, {lookup, Collection, Id}).
+    
 
 %%====================================================================
 %% gen_server callbacks
@@ -75,6 +80,14 @@ handle_call({put, Collection, Document}, _From, State) ->
                          mongo:insert(Collection, Document)
                  end),
     {reply, {ok, Id}, State};
+
+%% @doc Lookup
+handle_call({lookup, Collection, Id}, _From, State) ->
+    {ok, C} = mongo:do(safe, master, State#state.conn, State#state.db,
+                       fun() ->
+                               mongo:find(Collection, {'_id', Id})
+                       end),
+    {reply, {ok, C}, State};
 
 %% @doc Trap unknown calls
 handle_call(Message, _From, State) ->

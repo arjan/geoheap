@@ -78,11 +78,22 @@ doc_from_tweet(Tweet) ->
                    date, FormattedDate
                   ]).
 
+maybe_value({}) -> <<>>;
+maybe_value({null}) -> undefined;
+maybe_value({X}) when is_binary(X) -> X.
+     
+
 doc_from_instagram(Instagram) ->
     {Id} = bson:lookup(id, Instagram),
-    Text = case bson:lookup(text, Instagram) of
+    Tags = case bson:lookup(tags, Instagram) of
+               {[]} -> [];
+               {Ts} when is_list(Ts) ->
+                   lists:flatten([[tags, T] || T <- Ts])
+           end,
+
+    Text = case bson:lookup(caption, Instagram) of
                {} -> <<>>;
-               {T} -> T
+               {Doc} -> maybe_value(bson:lookup(text, Doc))
            end,
     {Timestamp} = bson:lookup(created_time, Instagram),
     Base = calendar:datetime_to_gregorian_seconds({{1970,1,1},{0,0,0}}),
@@ -109,7 +120,7 @@ doc_from_instagram(Instagram) ->
                    id, Id,
                    text, Text,
                    date, FormattedDate
-                  ]).
+                  ] ++ Tags).
 
 
 decode_json({struct, KeyValues}) ->
