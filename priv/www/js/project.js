@@ -70,9 +70,10 @@ $(function()
 
     var allItems = {};
     var loading = false;
+    var lastLoad = null;
+    var lastNumResults = 0;
 
-
-    function loadData()
+    function loadData(incremental)
     {
         if (loading) return;
         $("#loader").show();
@@ -90,25 +91,30 @@ $(function()
         var sources = (srci != srct) ? ("+source:"+(srci ? "instagram":"twitter")+" ") : "";
         var v = $("#q").val().trim();
         var txt = v ? (" +alltext:"+v) : "";
-        var args = {'from': Util.ISODateString(timebar.timeLeft), 
+        var args = {'from': Util.ISODateString(incremental ? lastLoad : timebar.timeLeft), 
                     'to': Util.ISODateString(timebar.timeRight),
                     'start': Util.ISODateString(timebar.timeStart),
                     'end': Util.ISODateString(timebar.timeEnd),
                     'lat': c.lat(),
                     'lon': c.lng(),
                     'radius': Math.ceil(r/1000),
+                    'facet': !incremental,
                     'q': sources + txt
                    };
 
         $.ajax({url: '/query?' + $.param(args),
                 success: function(r) {
+                    lastLoad = new Date();
+                    lastNumResults = incremental ? (lastNumResults + r.response.numFound) : r.response.numFound;
                     var html = "";
-                    html += "<div>Results: " + r.response.numFound + "</div>";
+                    html += "<div>Results: " + lastNumResults + "</div>";
                     $("#stats").html(html);
 
-                    var data = r.facet_counts.facet_dates.date;
-                    delete data.gap; delete data.start; delete data.end;
-                    timebar.setData(r.facet_counts.facet_dates.date);
+                    if (r.facet_counts) {
+                        var data = r.facet_counts.facet_dates.date;
+                        delete data.gap; delete data.start; delete data.end;
+                        timebar.setData(r.facet_counts.facet_dates.date);
+                    }
 
                     var hit = {};
                     var numnew = 0;
@@ -134,7 +140,9 @@ $(function()
                                                 allItems[item.data.id] = item;
                                                 item.marker.setMap(map);
                                             });
-                    for (var id in allItems) if (!hit[id]) allItems[id].marker.setVisible(false);
+                    if (!incremental) {
+                        for (var id in allItems) if (!hit[id]) allItems[id].marker.setVisible(false);
+                    }
                     if (lastnew) 
                         showInfoWindow(lastnew);
                     $("#loader").hide();
@@ -156,7 +164,7 @@ $(function()
     setInterval(function() {
                     if(timebar.timeRight > new Date()) {
                         // poll when we're in "realtime" mode
-                        loadData();
+                        loadData(true);
                     }
                 }, 5000);
 

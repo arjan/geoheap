@@ -57,13 +57,19 @@ geoquery(Req) ->
     {All, Req1} = cowboy_http_req:qs_vals(Req),
     From = proplists:get_value(<<"from">>, All),
     To = proplists:get_value(<<"to">>, All),
-    Start = proplists:get_value(<<"start">>, All),
-    End = proplists:get_value(<<"end">>, All),
+
+    FacetOptions = case proplists:get_value(<<"facet">>, All) of
+                       <<"true">> ->
+                           Start = proplists:get_value(<<"start">>, All),
+                           End = proplists:get_value(<<"end">>, All),
+                           [{facet_date, "{!ex=d}date", Start, End, "+1HOUR"}];
+                       _ ->
+                           []
+                   end,
     Query = case proplists:get_value(<<"q">>, All, <<>>) of
                 <<>> -> ["*:*"];
                 Q ->  Q
             end,
-%%    Query = ["+source:instagram *:",Q],
 
     FQ = ["{!tag=d}date:[", From, " TO ", To, "]"],
 
@@ -74,12 +80,12 @@ geoquery(Req) ->
 
     %%{ok, Opts, Docs, Extra} = esolr:search(Query, [{facet_date, "date", Start, End, "+1HOUR"}, {return, raw}]),
     {ok, RawResponse} = esolr:search(Query, [{fields, "id,location,source"},
+                                             {sort, [{date, desc}]},
                                              {rows, 2000},
                                              {fq, FQ}, 
                                              {fq, "{!bbox}"}, 
                                              {raw, Raw}, 
-                                             {facet_date, "{!ex=d}date", Start, End, "+1HOUR"}, 
-                                             {return, raw}]),
+                                             {return, raw}] ++ FacetOptions),
     {RawResponse, Req1}.
 
 
