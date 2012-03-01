@@ -169,8 +169,8 @@ vdbxml_item_to_bson(Item) ->
                 list_to_float(element_content("geo:long", Item))],
 
     %% The text (title + description
-    Text = list_to_binary(element_content("title", Item) ++ " " ++ 
-                              element_content("description", Item)),
+    Text = list_to_binary(to_utf8(element_content("title", Item) ++ " " ++ 
+                                      element_content("description", Item))),
 
     %% The date
     [$T,$E,$C,32|RawDate] = lists:reverse(element_content("updated", Item)),
