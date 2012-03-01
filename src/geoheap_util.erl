@@ -20,20 +20,23 @@
 
 -module(geoheap_util).
 -include("../include/geoheap.hrl").
+-include_lib("xmerl/include/xmerl.hrl").
 
 -export([proplist_to_bson/1,
          json_to_bson/1,
-         bson_to_solr/2,
+         bson_to_solr/1,
          to_utf8/1,
          doc_from_tweet/1,
-         doc_from_instagram/1
+         doc_from_instagram/1,
+         bson_to_json/1,
+         docs_from_vbdbxml/1
         ]).
 
 proplist_to_bson(List) ->
     list_to_tuple(
       lists:foldr(fun({K,V}, Acc) -> [K, V | Acc] end, [], List)).
 
-bson_to_solr(Id, Document) ->
+bson_to_solr(Document) ->
     Props1 = bson:fields(Document),
     Location = case proplists:get_value(location, Props1) of
                    undefined -> [];
@@ -50,7 +53,7 @@ bson_to_solr(Id, Document) ->
     Props2 = proplists:delete(original,
                               proplists:delete(location,
                                                Props1)),
-    Props3 = Location ++ Props2 ++ [{store_id, base64:encode(Id)}],
+    Props3 = Location ++ Props2,
     {doc, Props3}.
 
 json_to_bson(Json) ->
@@ -139,6 +142,55 @@ decode_json(L) when is_list(L) ->
 decode_json(R) ->
     lager:error("Unknown json decode: ~p", [R]).
 
+
+bson_to_json(X) when is_integer(X); is_atom(X); is_float(X); is_binary(X) ->
+    X;
+bson_to_json({bin, bin, B}) -> B;
+bson_to_json(Doc) when is_list(Doc) ->
+    {array, [bson_to_json(V) || V <- Doc]};
+bson_to_json(Doc) when is_tuple(Doc) ->
+    {struct, [{K, bson_to_json(V)} || {K, V} <- bson:fields(Doc)]}.
+
+
+%% @doc BSON docs from Verbeter-de-buurt RSS XML
+docs_from_vbdbxml(Xml) ->
+    {RootElem, _} = xmerl_scan:string(binary_to_list(Xml)),
+    Items = xmerl_xpath:string("//item", RootElem),
+    [vdbxml_item_to_bson(Item) || Item <- Items].
+
+vdbxml_item_to_bson(Item) ->
+    %% Get the ID
+    Url = element_content("link", Item),
+    {match, [IdPart]} = re:run(Url, "melding/([0-9]+)", [{capture, all_but_first, list}]),
+    Id = list_to_binary("vbdb" ++ IdPart),
+    
+    %% The location
+    Location = [list_to_float(element_content("geo:lat", Item)),
+                list_to_float(element_content("geo:long", Item))],
+
+    %% The text (title + description
+    Text = list_to_binary(element_content("title", Item) ++ " " ++ 
+                              element_content("description", Item)),
+
+    %% The date
+    [$T,$E,$C,32|RawDate] = lists:reverse(element_content("updated", Item)),
+    [Date] = calendar:local_time_to_universal_time_dst(dh_date:parse(lists:reverse(RawDate))),
+    FormattedDate = list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date)),
+    
+    {id, Id,
+     source, <<"vbdb">>,
+     date, FormattedDate,
+     location, Location,
+     text, Text}.
+
+
+element_content(XPath, Node) ->
+    [X] = xmerl_xpath:string(XPath, Node), xml_text(X).
+
+%% @doc Given a list of XML test, implode it into one list.
+%% @spec collapse_xmltext([#xmlText{}]) -> string()
+xml_text(#xmlElement{content=Content}) ->
+    lists:flatten([X#xmlText.value || X <- Content]).
 
 
 

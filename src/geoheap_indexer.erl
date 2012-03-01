@@ -2,15 +2,17 @@
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
 
+-include("../include/geoheap.hrl").
+
 -record(state, {committer, pending=[]}).
 -define(COMMIT_INTERVAL, 1500).
--define(COMMIT_MAXCOUNT, 200).
+-define(COMMIT_MAXCOUNT, 2000).
 
 %% ------------------------------------------------------------------
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/0, put/2]).
+-export([start_link/0, put/1, reindex_all/0]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -26,9 +28,21 @@
 start_link() ->
     gen_server:start_link({local, ?SERVER}, ?MODULE, [], []).
 
-put(Id, Document) ->
-    gen_server:cast(?SERVER, {put, Id, Document}),
+put(Document) ->
+    gen_server:cast(?SERVER, {put, Document}),
     ok.
+
+reindex_all() ->
+    {ok, Cursor} = geoheap_store:all(geoheap),
+    reindex(Cursor, mongo_cursor:next(Cursor)).
+
+reindex(_C, {}) ->
+    ok;
+reindex(Cursor, {Doc}) ->
+    ?MODULE:put(Doc),
+    reindex(Cursor, mongo_cursor:next(Cursor)).
+
+        
 
 %% ------------------------------------------------------------------
 %% gen_server Function Definitions
@@ -40,8 +54,8 @@ init(_Args) ->
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
-handle_cast({put, Id, Document}, State=#state{pending=P}) ->
-    State1 = State#state{pending=[geoheap_util:bson_to_solr(Id, Document)|P]},
+handle_cast({put, Document}, State=#state{pending=P}) ->
+    State1 = State#state{pending=[geoheap_util:bson_to_solr(Document)|P]},
     State2 = case length(State1#state.pending) >= ?COMMIT_MAXCOUNT of
                  true ->
                      commit(State1);

@@ -50,7 +50,8 @@ init([]) ->
            ?CHILD(geoheap_store, worker),
            ?CHILD(geoheap_indexer, worker),
            ?CHILD(geoheap_twitter, worker),
-           ?CHILD(geoheap_instagram, worker)
+           ?CHILD(geoheap_instagram, worker),
+           ?CHILD(geoheap_vbdb, worker)
           ],
     {ok, { {one_for_one, 5, 10}, All} }.
 

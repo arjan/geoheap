@@ -1,8 +1,8 @@
 %% @author Arjan Scherpenisse <arjan@scherpenisse.net>
 %% @copyright 2012 Arjan Scherpenisse <arjan@scherpenisse.net>
-%% Date: 2012-02-21
+%% Date: 2012-03-01
 
-%% @doc geohub: twitter aggregator.
+%% @doc Geoheap: verbeter de buurt periodic poller.
 
 %% Copyright 2012 Arjan Scherpenisse
 %%
@@ -18,12 +18,10 @@
 %% See the License for the specific language governing permissions and
 %% limitations under the License.
 
--module(geoheap_twitter).
-
+-module(geoheap_vbdb).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
-
--include("../include/geoheap.hrl").
+-define(POLL_INTERVAL, 30000).
 
 %% ------------------------------------------------------------------
 %% API Function Exports
@@ -38,8 +36,6 @@
 -export([init/1, handle_call/3, handle_cast/2, handle_info/2,
          terminate/2, code_change/3]).
 
--record(state, {request_id, statz_id, backoff=1}).
-
 %% ------------------------------------------------------------------
 %% API Function Definitions
 %% ------------------------------------------------------------------
@@ -51,10 +47,11 @@ start_link() ->
 %% gen_server Function Definitions
 %% ------------------------------------------------------------------
 
-init(_Args) ->
-    {ok, StatzId} = statz:new(?MODULE),
-    State = #state{statz_id=StatzId},
-    {ok, reconnect(State)}.
+init(Args) ->
+    lager:info("Verbeter de buurt: starting"),
+    timer:send_interval(?POLL_INTERVAL, poll),
+    {ok, _StatzId} = statz:new(?MODULE),
+    {ok, Args}.
 
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
@@ -62,40 +59,24 @@ handle_call(_Request, _From, State) ->
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
-
-handle_info({http, {_, stream_start, _Headers}}, State) ->
+handle_info({http, {_Ref, HttpResponse}}, State) ->
+    {{_, 200, _}, _Headers, XML} = HttpResponse,
+    All = geoheap_util:docs_from_vbdbxml(XML),
+    [begin
+         geoheap_store:put(geoheap, Doc),
+         geoheap_indexer:put(Doc),
+         statz:incr(?MODULE)
+     end || Doc <- All],
+    lager:info("vbdb: updated ~p.~n", [length(All)]),
     {noreply, State};
 
-handle_info({http, {R, stream, <<"\n">>}}, State=#state{request_id=R}) ->
-    %% Twitter keepalive
+handle_info(poll, State) ->
+    Url = "http://www.verbeterdebuurt.nl/api/rss/postcode/1012",
+    {ok,_RequestId} = httpc:request(get,{Url, []}, [], [{sync,false}]),
     {noreply, State};
 
-handle_info({http, {R, stream, <<"{",_/binary>>=Content}}, State=#state{request_id=R}) ->
-    try
-        BSON = geoheap_util:json_to_bson(mochijson:decode(Content)),
-        Doc = geoheap_util:doc_from_tweet(BSON),
-        geoheap_store:put(geoheap, Doc),
-        geoheap_indexer:put(Doc),
-        statz:incr(?MODULE)
-    catch
-        _:{badmatch,{}} -> nop;
-        _:E ->
-            lager:error("~p: ~p~n", [E, Content]),
-            ok
-    end,
-    {noreply, State#state{backoff=1}}; % mark success
-
-handle_info({http, {R, stream_end, _Headers}}, State=#state{request_id=R, backoff=B}) ->
-    lager:info("Stream end. Retrying after a while..."),
-    timer:sleep(B*10),
-    {noreply, reconnect(State#state{backoff=2*B})};
-
-handle_info({http,{R,{error,socket_closed_remotely}}}, State=#state{request_id=R}) ->
-    {noreply, reconnect(State)};
-
-
-handle_info(Info, State) ->
-    lager:info("twitter: Unhandled message: ~p~n", [Info]),
+handle_info(_Info, State) ->
+    lager:info("vbdb: unhandled message ~p~n", [_Info]),
     {noreply, State}.
 
 terminate(_Reason, _State) ->
@@ -108,17 +89,3 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
-reconnect(State) ->
-    lager:info("twitter: Reconnect."),
-
-    {ok, Login} = application:get_env(geoheap, twitter_username),
-    {ok, Password} = application:get_env(geoheap, twitter_password),
-    {ok, Body} = application:get_env(geoheap, twitter_apifilter),
-
-    URL = "https://" ++ Login ++ ":" ++ Password ++ "@stream.twitter.com/1/statuses/filter.json",
-    {ok, RequestId} = httpc:request(post,
-                                    {URL, [], "application/x-www-form-urlencoded", Body},
-                                    [],
-                                    [{sync, false},
-                                     {stream, self}]),
-    State#state{request_id=RequestId}.

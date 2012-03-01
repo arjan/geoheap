@@ -22,7 +22,8 @@
 -include("../include/geoheap.hrl").
 
 -export([setup/0,
-         geoquery/1]).
+         geoquery/1,
+         item/1]).
 
 setup() ->
     Dispatch = [
@@ -33,6 +34,7 @@ setup() ->
                         [{callback, fun geoheap_instagram:subscription_callback/1}]},
                         
                        {[<<"query">>], geoheap_web_json, [{callback, fun geoheap_web:geoquery/1}, {return, raw}]},
+                       {[<<"item">>], geoheap_web_json, [{callback, fun geoheap_web:item/1}]},
                        {['...'], cowboy_http_static, [{directory, "priv/www"}, {mimetypes, mime()}]}
                       ]}
                ],
@@ -80,3 +82,10 @@ geoquery(Req) ->
                                              {return, raw}]),
     {RawResponse, Req1}.
 
+item(Req) ->
+    {Base64, Req1} = cowboy_http_req:qs_val(<<"id">>, Req),
+    ?DEBUG(Base64),
+    Id = {base64:decode(binary_to_list(Base64))},
+    {ok, Document} = geoheap_store:lookup(geoheap, Id),
+    ?DEBUG(Document),
+    {geoheap_util:bson_to_json(Document), Req1}.

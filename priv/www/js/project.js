@@ -20,13 +20,29 @@ $(function()
 
     function showInfoWindow(el)
     {
-        var html = "";
-        html += "<p>" + el.screenname + " @ " + el.date + "</p>";
-        if (el.thumbnail) html +="<p style=\"height:150px\"><img src=\""+el.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
-        if (el.text) html +="<p><strong>"+el.text+"</strong></p>";
-        infowindow.setContent(html);
-        infowindow.setPosition(el.pos);
-        infowindow.open(map);
+        var fullname = function(item, el) {
+            if (!item) return el.screenname;
+            if (item.source == 'instagram')
+                return item.original.user.full_name;
+            if (item.source == 'twitter')
+                return item.original.user.name;
+        };
+        var showitem = function(item) {
+            var html = "";
+            html += "<p>" + fullname(item, el) + " @ " + el.date + "</p>";
+            if (el.thumbnail) html +="<p style=\"height:150px\"><img src=\""+el.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
+            if (el.text) html +="<p><strong>"+el.text+"</strong></p>";
+            infowindow.setContent(html);
+            infowindow.setPosition(el.pos);
+            infowindow.open(map);
+        };
+        if (!el.store_id) {
+            showitem(null, el);
+            return;
+        }
+        $.ajax({url: '/item?id=' + encodeURIComponent(el.store_id),
+                success: showitem
+               });
     }
     google.maps.event.addListener(map, 'click', function(){infowindow.close();});
 

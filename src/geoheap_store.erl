@@ -31,7 +31,8 @@
 -export([
          ping/0,
          put/2,
-         lookup/2
+         lookup/2,
+         all/1
 ]).
 
 -record(state, {db, conn}).
@@ -50,10 +51,13 @@ ping() ->
 
 -spec put(atom(), any()) -> {ok, Id::integer()}.
 put(Collection, Document) ->
-    gen_server:call(?MODULE, {put, Collection, Document}).
+    gen_server:cast(?MODULE, {put, Collection, Document}).
 
 lookup(Collection, Id) ->
     gen_server:call(?MODULE, {lookup, Collection, Id}).
+    
+all(Collection) ->
+    gen_server:call(?MODULE, {all, Collection}).
     
 
 %%====================================================================
@@ -72,28 +76,36 @@ init(_Args) ->
 handle_call(ping, _From, State) ->
     {reply, pong, State};
 
-
-%% @doc Trap unknown calls
-handle_call({put, Collection, Document}, _From, State) ->
-    {ok, {Id}} = mongo:do(safe, master, State#state.conn, State#state.db,
+%% @doc All
+handle_call({all, Collection}, _From, State) ->
+    {ok, Cursor} = mongo:do(safe, master, State#state.conn, State#state.db,
                  fun() ->
-                         mongo:insert(Collection, Document)
+                         mongo:find(Collection, {})
                  end),
-    {reply, {ok, Id}, State};
+    {reply, {ok, Cursor}, State};
 
 %% @doc Lookup
 handle_call({lookup, Collection, Id}, _From, State) ->
     {ok, C} = mongo:do(safe, master, State#state.conn, State#state.db,
                        fun() ->
-                               mongo:find(Collection, {'_id', Id})
+                               mongo:find(Collection, {id, Id})
                        end),
-    {reply, {ok, C}, State};
+    [Document] = mongo_cursor:rest(C),
+    {reply, {ok, Document}, State};
 
 %% @doc Trap unknown calls
 handle_call(Message, _From, State) ->
     {stop, {unknown_call, Message}, State}.
 
 
+%% @doc Insert or replace document
+handle_cast({put, Collection, Document}, State) ->
+    {DocId} = bson:lookup(id, Document),
+    mongo:do(safe, master, State#state.conn, State#state.db,
+             fun() ->
+                     ok = mongo:repsert(Collection, {id, DocId}, Document)
+             end),
+    {noreply, State};
 
 %% @doc Trap unknown casts
 handle_cast(Message, State) ->
