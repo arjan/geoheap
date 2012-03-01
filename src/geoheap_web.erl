@@ -73,7 +73,7 @@ geoquery(Req) ->
     Raw = ["sfield=location&pt=", Lat, ",", Lon, "&d=", D],
 
     %%{ok, Opts, Docs, Extra} = esolr:search(Query, [{facet_date, "date", Start, End, "+1HOUR"}, {return, raw}]),
-    {ok, RawResponse} = esolr:search(Query, [
+    {ok, RawResponse} = esolr:search(Query, [{fields, "id,location,source"},
                                              {rows, 2000},
                                              {fq, FQ}, 
                                              {fq, "{!bbox}"}, 

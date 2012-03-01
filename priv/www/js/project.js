@@ -5,6 +5,37 @@
 
 $(function()
 {
+    var ItemMapping = {
+        'twitter': function(item) 
+        {
+            this.fullName = function() {
+                return this.data.original.user.name;
+            };
+            this.markerImage = function() {
+                return "/img/blue.png";
+            };
+            return this;
+        },
+        'instagram': function() {
+            this.fullName = function() {
+                return this.data.original.user.full_name;
+            };
+            this.markerImage = function() {
+                return "/img/red.png";
+            };
+            return this;
+        }
+    };
+    var ItemFactory = function(item) {
+        var inst = new ItemMapping[item.source]();
+        inst.data = item;
+        var s = item.location.split(",");
+        inst.latlng = new google.maps.LatLng(parseFloat(s[0]), parseFloat(s[1]));
+        inst.marker = new google.maps.Marker({position: inst.latlng, icon: inst.markerImage()});
+        return inst;
+    };
+
+    
     $(".do_timebar:first").timebar();
     var timebar = $(".do_timebar:first").data('timebar');
 
@@ -18,32 +49,26 @@ $(function()
 
     var infowindow = new google.maps.InfoWindow({disableAutoPan: true});
 
-    function showInfoWindow(el)
+    function showInfoWindow(item)
     {
-        var fullname = function(item, el) {
-            if (!item) return el.screenname;
-            if (item.source == 'instagram')
-                return item.original.user.full_name;
-            if (item.source == 'twitter')
-                return item.original.user.name;
-            return "?";
-        };
-        var showitem = function(item) {
+        var showitem = function(detail) {
+            $.extend(item.data, detail);
             var html = "";
-            html += "<p>" + fullname(item, el) + " @ " + el.date + "</p>";
-            if (el.thumbnail) html +="<p style=\"height:150px\"><img src=\""+el.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
-            if (el.text) html +="<p><strong>"+el.text+"</strong></p>";
+            html += "<p>" + item.fullName() + " @ " + detail.date + "</p>";
+            if (detail.thumbnail) html +="<p style=\"height:150px\"><img src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
+            if (detail.text) html +="<p><strong>"+detail.text+"</strong></p>";
             infowindow.setContent(html);
-            infowindow.setPosition(el.pos);
+            infowindow.setPosition(item.latlng);
             infowindow.open(map);
         };
-        $.ajax({url: '/item?id=' + encodeURIComponent(el.id),
+
+        $.ajax({url: '/item?id=' + encodeURIComponent(item.data.id),
                 success: showitem
                });
     }
     google.maps.event.addListener(map, 'click', function(){infowindow.close();});
 
-    var allmarkers = {};
+    var allItems = {};
     var loading = false;
 
 
@@ -93,32 +118,23 @@ $(function()
                     $(r.response.docs).each(function() {
                                                 var el = this;
                                                 hit[el.id] = true;
-                                                if (el.id in allmarkers) {
-                                                    allmarkers[el.id].setVisible(true);
+                                                if (el.id in allItems) {
+                                                    allItems[el.id].marker.setVisible(true);
                                                     return;
                                                 }
-                                                var s = el.location.split(",");
-                                                el.pos = new google.maps.LatLng(parseFloat(s[0]), parseFloat(s[1]));
-                                                var icon = el.source == "twitter" ? "/img/blue.png" : "/img/red.png";
-                                                var m = new google.maps.Marker({
-                                                                                   position: el.pos,
-                                                                                   title: el.screenname + " @ " + el.date + ": " + el.text,
-                                                                                   icon: icon
-                                                                               });
-                                                google.maps.event.addListener(m, 'click', function(){showInfoWindow(el);});
-
+                                                var item = ItemFactory(el);
+                                                google.maps.event.addListener(item.marker, 'click', function(){showInfoWindow(item);});
                                                 numnew++;
                                                 if (numnew < 20) {
-                                                    m.setAnimation(google.maps.Animation.DROP);
-                                                    var r = google.maps.geometry.spherical.computeDistanceBetween(el.pos, c);
+                                                    item.marker.setAnimation(google.maps.Animation.DROP);
+                                                    var r = google.maps.geometry.spherical.computeDistanceBetween(item.latlng, c);
                                                     if (lastnewdist === null || r < lastnewdist)
-                                                        lastnew = el;
+                                                        lastnew = item;
                                                 }
-
-                                                allmarkers[el.id] = m;
-                                                m.setMap(map);
+                                                allItems[item.data.id] = item;
+                                                item.marker.setMap(map);
                                             });
-                    for (var id in allmarkers) if (!hit[id]) allmarkers[id].setVisible(false);
+                    for (var id in allItems) if (!hit[id]) allItems[id].marker.setVisible(false);
                     if (lastnew) 
                         showInfoWindow(lastnew);
                     $("#loader").hide();

@@ -33,8 +33,7 @@
             self.setupLegend();
 
             self.bracketTimer = Util.IdleTimer(200, self.bracketChanged, self);
-            self.setBracket(0.0, 1.0);
-
+            self.setDateBracket(new Date((now-7200)*1000), self.timeEnd);
             self.refresh();
             self.setupDrag();
         },
@@ -84,7 +83,7 @@
             left = Math.max(0, Math.min(1, left));
             right = Math.max(0, Math.min(1, right));
 
-            var n = (self.timeEnd.getTime()-self.timeStart.getTime()) / (1000*900);
+            var n = (self.timeEnd.getTime()-self.timeStart.getTime()) / (1000*900); // 15 minute increment
             left = Math.floor(left*n)/n;
             right = Math.floor(right*n)/n;
 
@@ -152,6 +151,14 @@
 
             self.refresh();
             self.setPan(1/totalw * px);
+        },
+
+        setDateBracket: function(start, end) {
+            var self = this;
+            var d = self.timeEnd.getTime() - self.timeStart.getTime();
+            var right = (end.getTime()-self.timeStart.getTime())/d;
+            var left = (start.getTime()-self.timeStart.getTime())/d;
+            self.setBracket(left, right);
         },
         
         setupDrag: function() {
