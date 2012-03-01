@@ -18,7 +18,7 @@
    inkscape:export-filename="/home/arjan/blue.png"
    inkscape:export-xdpi="9.8100004"
    inkscape:export-ydpi="9.8100004"
-   sodipodi:docname="New document 1">
+   sodipodi:docname="dot.svg">
   <defs
      id="defs4">
     <linearGradient
@@ -28,7 +28,7 @@
          offset="0"
          id="stop3827" />
       <stop
-         style="stop-color:#6c6eff;stop-opacity:1;"
+         style="stop-color:#33ff33;stop-opacity:1;"
          offset="1"
          id="stop3829" />
     </linearGradient>
@@ -59,7 +59,7 @@
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
      inkscape:zoom="2.8"
-     inkscape:cx="50.552746"
+     inkscape:cx="-5.3401111"
      inkscape:cy="36.503221"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
@@ -80,7 +80,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title></dc:title>
+        <dc:title />
       </cc:Work>
     </rdf:RDF>
   </metadata>

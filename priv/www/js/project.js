@@ -5,6 +5,8 @@
 
 $(function()
 {
+    var allSources = ['twitter', 'instagram', 'vbdb'];
+    
     var ItemMapping = {
         'twitter': function(item) 
         {
@@ -22,6 +24,15 @@ $(function()
             };
             this.markerImage = function() {
                 return "/img/red.png";
+            };
+            return this;
+        },
+        'vbdb': function() {
+            this.fullName = function() {
+                return 'Verbeter de Buurt';
+            };
+            this.markerImage = function() {
+                return "/img/green.png";
             };
             return this;
         }
@@ -88,7 +99,12 @@ $(function()
 
         var srci = $("#src-instagram:checked").length > 0;
         var srct = $("#src-twitter:checked").length > 0;
-        var sources = (srci != srct) ? ("+source:"+(srci ? "instagram":"twitter")+" ") : "";
+        
+        var sources = "";
+        $("input.source:checked").each(function() { sources += " source: " + $(this).attr("id").substr(4);});
+        if (sources)
+            sources = "+(" + sources + ")";
+
         var v = $("#q").val().trim();
         var txt = v ? (" +alltext:"+v) : "";
         var args = {'from': Util.ISODateString(incremental ? lastLoad : timebar.timeLeft), 
