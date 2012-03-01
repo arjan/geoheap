@@ -82,10 +82,9 @@ geoquery(Req) ->
                                              {return, raw}]),
     {RawResponse, Req1}.
 
+
+%% @doc Serve a single item from the store as JSON.
 item(Req) ->
-    {Base64, Req1} = cowboy_http_req:qs_val(<<"id">>, Req),
-    ?DEBUG(Base64),
-    Id = {base64:decode(binary_to_list(Base64))},
+    {Id, Req1} = cowboy_http_req:qs_val(<<"id">>, Req),
     {ok, Document} = geoheap_store:lookup(geoheap, Id),
-    ?DEBUG(Document),
     {geoheap_util:bson_to_json(Document), Req1}.

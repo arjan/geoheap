@@ -26,6 +26,7 @@ $(function()
                 return item.original.user.full_name;
             if (item.source == 'twitter')
                 return item.original.user.name;
+            return "?";
         };
         var showitem = function(item) {
             var html = "";
@@ -36,11 +37,7 @@ $(function()
             infowindow.setPosition(el.pos);
             infowindow.open(map);
         };
-        if (!el.store_id) {
-            showitem(null, el);
-            return;
-        }
-        $.ajax({url: '/item?id=' + encodeURIComponent(el.store_id),
+        $.ajax({url: '/item?id=' + encodeURIComponent(el.id),
                 success: showitem
                });
     }
