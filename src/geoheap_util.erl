@@ -173,7 +173,10 @@ vdbxml_item_to_bson(Item) ->
                                       element_content("description", Item))),
 
     %% The date
-    [$T,$E,$C,32|RawDate] = lists:reverse(element_content("updated", Item)),
+    RawDate = case lists:reverse(element_content("updated", Item)) of
+                  [$T,$E,$C,32|R] -> R;
+                  [$T,$S, $E,$C,32|R] -> R
+              end,
     [Date] = calendar:local_time_to_universal_time_dst(dh_date:parse(lists:reverse(RawDate))),
     FormattedDate = list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date)),
     
