@@ -21,7 +21,7 @@
 -module(geoheap_vbdb).
 -behaviour(gen_server).
 -define(SERVER, ?MODULE).
--define(POLL_INTERVAL, 30000).
+-define(POLL_INTERVAL, 600*1000).
 
 %% ------------------------------------------------------------------
 %% API Function Exports
@@ -71,7 +71,7 @@ handle_info({http, {_Ref, HttpResponse}}, State) ->
     {noreply, State};
 
 handle_info(poll, State) ->
-    Url = "http://www.verbeterdebuurt.nl/api/rss/postcode/1012",
+    {ok, Url} = application:get_env(geoheap, vbdb_rss_url),
     {ok,_RequestId} = httpc:request(get,{Url, []}, [], [{sync,false}]),
     {noreply, State};
 
