@@ -182,8 +182,8 @@ vdbxml_item_to_bson(Item) ->
                         {error, bad_date} ->
                             lager:error("vbdb: Bad date: ~p~n", [RawDate]),
                             <<>>;
-                        _ ->
-                            [Date] = calendar:local_time_to_universal_time_dst(),
+                        R ->
+                            [Date] = calendar:local_time_to_universal_time_dst(R),
                             list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date))
                     end,
     
