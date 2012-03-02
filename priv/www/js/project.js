@@ -163,6 +163,10 @@ $(function()
                         showInfoWindow(lastnew);
                     $("#loader").hide();
                     loading = false;
+                },
+                error: function() {
+                    $("#loader").hide();
+                    loading = false;
                 }
                });
     }
