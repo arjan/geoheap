@@ -181,7 +181,7 @@ vdbxml_item_to_bson(Item) ->
     FormattedDate = case dh_date:parse(lists:reverse(RawDate)) of
                         {error, bad_date} ->
                             lager:error("vbdb: Bad date: ~p~n", [RawDate]),
-                            <<>>;
+                            undefined;
                         ParsedDate ->
                             [Date] = calendar:local_time_to_universal_time_dst(ParsedDate),
                             list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date))
