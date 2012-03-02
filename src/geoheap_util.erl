@@ -96,6 +96,7 @@ doc_from_instagram(Instagram) ->
 
     Text = case bson:lookup(caption, Instagram) of
                {} -> <<>>;
+               {null} -> <<>>;
                {Doc} -> maybe_value(bson:lookup(text, Doc))
            end,
     {Timestamp} = bson:lookup(created_time, Instagram),
