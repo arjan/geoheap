@@ -32,7 +32,7 @@ put(Document) ->
     ok.
 
 put_sync(Document) ->
-    gen_server:call(?SERVER, {put, Document}).
+    gen_server:call(?SERVER, {put, Document}, infinity).
 
 reindex_all() ->
     {ok, Cursor} = geoheap_store:all(geoheap),
