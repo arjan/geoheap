@@ -32,7 +32,8 @@
          ping/0,
          put/2,
          lookup/2,
-         all/1
+         all/1,
+         all/2
 ]).
 
 -record(state, {db, conn}).
@@ -57,7 +58,10 @@ lookup(Collection, Id) ->
     gen_server:call(?MODULE, {lookup, Collection, Id}).
     
 all(Collection) ->
-    gen_server:call(?MODULE, {all, Collection}).
+    all(Collection, 0).
+    
+all(Collection, Offset) ->
+    gen_server:call(?MODULE, {all, Collection, Offset}).
     
 
 %%====================================================================
@@ -77,10 +81,10 @@ handle_call(ping, _From, State) ->
     {reply, pong, State};
 
 %% @doc All
-handle_call({all, Collection}, _From, State) ->
+handle_call({all, Collection, Offset}, _From, State) ->
     {ok, Cursor} = mongo:do(safe, master, State#state.conn, State#state.db,
                  fun() ->
-                         mongo:find(Collection, {})
+                         mongo:find(Collection, {}, {}, Offset)
                  end),
     {reply, {ok, Cursor}, State};
 

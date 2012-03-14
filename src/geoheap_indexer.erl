@@ -11,7 +11,7 @@
 %% API Function Exports
 %% ------------------------------------------------------------------
 
--export([start_link/0, put/1, put_sync/1, reindex_all/0]).
+-export([start_link/0, put/1, put_sync/1, reindex/0, reindex/1]).
 
 %% ------------------------------------------------------------------
 %% gen_server Function Exports
@@ -34,8 +34,11 @@ put(Document) ->
 put_sync(Document) ->
     gen_server:call(?SERVER, {put, Document}, infinity).
 
-reindex_all() ->
-    {ok, Cursor} = geoheap_store:all(geoheap),
+reindex() ->
+    reindex(0).
+
+reindex(Offset) ->
+    {ok, Cursor} = geoheap_store:all(geoheap, Offset),
     reindex(Cursor, mongo_cursor:next(Cursor), 0, 0).
 
 reindex(C, D, 10000, N)->
