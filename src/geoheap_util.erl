@@ -54,7 +54,7 @@ bson_to_solr(Document) ->
                               proplists:delete(location,
                                                Props1)),
     Props3 = Location ++ Props2,
-    {doc, Props3}.
+    {ok, {doc, Props3}}.
 
 json_to_bson(Json) ->
     decode_json(Json).

@@ -59,23 +59,18 @@ init(_Args) ->
     esolr:set_auto_commit({time, 10000}),
     {ok, #state{}}.
 
-handle_call({put, Document}, _From, State=#state{pending=P}) ->
-    State1 = State#state{pending=[geoheap_util:bson_to_solr(Document)|P]},
-    {reply, ok, bump_add(State1)};
+handle_call({put, Document}, _From, State) ->
+    {reply, ok, bump_add(State, Document)};
 handle_call(_Request, _From, State) ->
     {reply, ok, State}.
 
-
-handle_cast({put, Document}, State=#state{pending=P}) ->
-    State1 = State#state{pending=[geoheap_util:bson_to_solr(Document)|P]},
-    {noreply, bump_add(State1)};
-
+handle_cast({put, Document}, State) ->
+    {noreply, bump_add(State, Document)};
 handle_cast(_Msg, State) ->
     {noreply, State}.
 
 handle_info(add, State) ->
     {noreply, do_add(State)};
-     
 handle_info(_Info, State) ->
     {noreply, State}.
 
@@ -95,7 +90,13 @@ do_add(State=#state{pending=Pending}) ->
     State#state{pending=[], adder=undefined}.
 
 %% bump a commit timer
-bump_add(State=#state{adder=undefined}) ->
-    State#state{adder=erlang:send_after(?COMMIT_INTERVAL, self(), add)};
-bump_add(State) ->
-    State.
+bump_add(State=#state{adder=undefined}, Document) ->
+    bump_add(State#state{adder=erlang:send_after(?COMMIT_INTERVAL, self(), add)}, Document);
+bump_add(State=#state{pending=P}, Document) ->
+    case catch geoheap_util:bson_to_solr(Document) of
+        {ok, D} ->
+            State#state{pending=[D|P]};
+        _E ->
+            lager:error("Error encoding document: ~p~n", [_E]),
+            State
+    end.
