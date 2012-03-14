@@ -67,7 +67,7 @@ handle_info({http, {_Ref, HttpResponse}}, State) ->
          geoheap_indexer:put(Doc),
          statz:incr(?MODULE)
      end || Doc <- All],
-    lager:info("vbdb: updated ~p.~n", [length(All)]),
+    %%lager:info("vbdb: updated ~p.~n", [length(All)]),
     {noreply, State};
 
 handle_info(poll, State) ->
