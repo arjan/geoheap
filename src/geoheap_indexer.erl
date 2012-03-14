@@ -59,7 +59,7 @@ init(_Args) ->
     esolr:set_auto_commit({time, 10000}),
     {ok, #state{}}.
 
-handle_call({put_sync, Document}, _From, State=#state{pending=P}) ->
+handle_call({put, Document}, _From, State=#state{pending=P}) ->
     State1 = State#state{pending=[geoheap_util:bson_to_solr(Document)|P]},
     {reply, ok, bump_add(State1)};
 handle_call(_Request, _From, State) ->
@@ -90,6 +90,7 @@ code_change(_OldVsn, State, _Extra) ->
 %% ------------------------------------------------------------------
 
 do_add(State=#state{pending=Pending}) ->
+    lager:info("Adding ~p docs~n", [length(Pending)]),
     esolr:add(Pending),
     State#state{pending=[], adder=undefined}.
 
