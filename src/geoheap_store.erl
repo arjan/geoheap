@@ -61,7 +61,7 @@ all(Collection) ->
     all(Collection, 0).
     
 all(Collection, Offset) ->
-    gen_server:call(?MODULE, {all, Collection, Offset}).
+    gen_server:call(?MODULE, {all, Collection, Offset}, infinity).
     
 
 %%====================================================================
