@@ -60,6 +60,21 @@ json_to_bson(Json) ->
     decode_json(Json).
 
 
+bson_fields_to_solr(List) ->
+    bson_fields_to_solr(List, []).
+
+bson_fields_to_solr([], Acc) ->
+    lists:reverse(Acc);
+bson_fields_to_solr([{K, V=[{_,_}|_]}|Rest], Acc) ->
+    V1 = bson_fields_to_solr(V),
+    bson_fields_to_solr(Rest, [{K, V1}|Acc]);    
+bson_fields_to_solr([{K, V}|Rest], Acc) when is_atom(V) ->
+    bson_fields_to_solr(Rest, [{K, atom_to_list(V)}|Acc]);
+bson_fields_to_solr([{K, V}|Rest], Acc) ->
+    bson_fields_to_solr(Rest, [{K, V}|Acc]).
+
+
+
 doc_from_tweet(Tweet) ->
     {Id} = bson:lookup(id_str, Tweet),
     {Text} = bson:lookup(text, Tweet),
