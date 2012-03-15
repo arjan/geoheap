@@ -219,7 +219,7 @@ $(function()
     function refreshHeatmap(r) {
         var dataset = {data: [], max: 1};
 
-        r = r.facet_counts.facet_fields.geohash;
+        r = r.facet_counts.facet_fields.geohash_6;
 
         for (var i=0; i< r.length; i+= 2) {
             var hash = r[i].substr(1);
