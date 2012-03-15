@@ -1,0 +1,6 @@
+[submodule "priv/www/ext/heatmapjs"]
+	path = priv/www/ext/heatmapjs
+	url = https://github.com/pa7/heatmap.js.git
+[submodule "priv/www/ext/geohashjs"]
+	path = priv/www/ext/geohashjs
+	url = https://github.com/davetroy/geohash-js.git

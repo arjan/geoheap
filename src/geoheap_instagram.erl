@@ -92,9 +92,10 @@ init(Args) ->
     %% Setup subscriptions according to application environment
     unsubscribe_all(),
     {ok, Locations} = application:get_env(geoheap, instagram_locations),
-    [subscribe(Long, Lat, Radius) ||
-        {Long, Lat, Radius} <- Locations],
-
+    spawn(fun() ->
+                  [subscribe(Long, Lat, Radius) ||
+                      {Long, Lat, Radius} <- Locations]
+          end),
     {ok, _StatzId} = statz:new(?MODULE),
     {ok, Args}.
 
