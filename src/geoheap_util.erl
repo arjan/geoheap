@@ -47,7 +47,12 @@ bson_to_solr(Document) ->
                        Hashes = [lists:flatten([io_lib:format("~1.16B", [N])
                                                 | lists:sublist(Hash, N)])
                                  || N <- lists:seq(1,12)],
-                       H1 = [{geohash_6, lists:nth(6, Hashes)},{geohash_9, lists:nth(9, Hashes)},{geohash_c, lists:nth(12, Hashes)}],
+                       H1 = [
+                             {geohash_5, lists:nth(5, Hashes)},
+                             {geohash_6, lists:nth(6, Hashes)},
+                             {geohash_7, lists:nth(7, Hashes)},
+                             {geohash_8, lists:nth(8, Hashes)},
+                             {geohash_9, lists:nth(9, Hashes)}],
                        H2 = [{geohash, H} || H <- Hashes],
                        [{location, list_to_binary(lists:flatten(
                                                     io_lib:format("~.5f,~.5f", [X+0.0, Y+0.0])))}]++H1++H2

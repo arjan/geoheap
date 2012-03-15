@@ -76,7 +76,10 @@
 
         <field name="geohash" type="string" indexed="true" multiValued="true" />
 
+        <field name="geohash_5" type="string" indexed="true" multiValued="false" />
         <field name="geohash_6" type="string" indexed="true" multiValued="false" />
+        <field name="geohash_7" type="string" indexed="true" multiValued="false" />
+        <field name="geohash_8" type="string" indexed="true" multiValued="false" />
         <field name="geohash_9" type="string" indexed="true" multiValued="false" />
         <field name="geohash_c" type="string" indexed="true" multiValued="false" />
         
