@@ -6,7 +6,14 @@
 $(function()
 {
     var allSources = ['twitter', 'instagram', 'vbdb'];
-    
+
+    var hashToState = function(hash) {
+        return JSON.parse(decodeURIComponent(hash.substr(1)));
+    };
+    var stateToHash = function(state) {
+        return encodeURIComponent(JSON.stringify(state));
+    };
+
     var ItemMapping = {
         'twitter': function(item) 
         {
@@ -58,6 +65,37 @@ $(function()
     var map = new google.maps.Map(document.getElementById("map"),
                                   myOptions);
 
+
+    var getState = function() {
+        var c = map.getCenter();
+        var sources = [];
+        $("input.source:checked").each(function() { sources.push($(this).attr("id").substr(4));});
+        return [c.lat(), c.lng(), map.getZoom(),sources, view, timebar.getBracket()];
+    };
+    var applyState = function(state) {
+        map.setCenter(new google.maps.LatLng(state[0], state[1]));
+        map.setZoom(state[2]);
+        $("input.source").each(function(){$(this).removeAttr("checked"); if ($.inArray($(this).attr("id").substr(4), state[3])>=0) $(this).attr("checked", "checked");});
+        view = state[4];
+        $("input.view").removeAttr("checked");
+        $("#view-" + view).attr("checked", "checked");
+        timebar.setBracket(state[5][0], state[5][1]);
+    };
+
+    var allItems = {};
+    var loading = false;
+    var lastLoad = null;
+    var lastNumResults = 0;
+    var view = 'items';
+
+    if (document.location.hash) {
+        try {
+            var state = hashToState(document.location.hash);
+            applyState(state);
+        } catch (x) {
+        }
+    }
+    
     var infowindow = new google.maps.InfoWindow({disableAutoPan: true});
 
     function showInfoWindow(item)
@@ -79,13 +117,11 @@ $(function()
     }
     google.maps.event.addListener(map, 'click', function(){infowindow.close();});
 
-    var allItems = {};
-    var loading = false;
-    var lastLoad = null;
-    var lastNumResults = 0;
-
+    
     function loadData(incremental)
     {
+        document.location = "#" + stateToHash(getState());
+        
         if (loading) return;
         $("#loader").show();
         loading = true;
@@ -141,25 +177,31 @@ $(function()
                                                 var el = this;
                                                 hit[el.id] = true;
                                                 if (el.id in allItems) {
-                                                    allItems[el.id].marker.setVisible(true);
+                                                    if (view == 'items') allItems[el.id].marker.setVisible(true);
                                                     return;
                                                 }
                                                 var item = ItemFactory(el);
                                                 google.maps.event.addListener(item.marker, 'click', function(){showInfoWindow(item);});
                                                 numnew++;
-                                                if (numnew < 20) {
+                                                if (numnew < 2) {
                                                     item.marker.setAnimation(google.maps.Animation.DROP);
                                                     var r = google.maps.geometry.spherical.computeDistanceBetween(item.latlng, c);
                                                     if (lastnewdist === null || r < lastnewdist)
                                                         lastnew = item;
                                                 }
                                                 allItems[item.data.id] = item;
+                                                if (view != 'items') allItems[el.id].marker.setVisible(false);
                                                 item.marker.setMap(map);
                                             });
+                    if (view == 'heatmap') {
+                        for (var i in allItems) allItems[i].marker.setVisible(false);
+                    }
+                    hoverlay.heatmap.setVisible(view == 'heatmap');
                     if (!incremental) {
                         for (var id in allItems) if (!hit[id]) allItems[id].marker.setVisible(false);
+                        if (view == 'heatmap') refreshHeatmap(r);
                     }
-                    if (lastnew) 
+                    if (lastnew && view == 'items') 
                         showInfoWindow(lastnew);
                     $("#loader").hide();
                     loading = false;
@@ -171,6 +213,35 @@ $(function()
                });
     }
 
+    // heatmap
+    var hoverlay = new HeatmapOverlay(map, {"radius":50, "visible":true, "opacity":70});
+
+    function refreshHeatmap(r) {
+        var dataset = {data: [], max: 1};
+
+        r = r.facet_counts.facet_fields.geohash;
+
+        for (var i=0; i< r.length; i+= 2) {
+            var hash = r[i].substr(1);
+            var c = r[i+1];
+            var h = decodeGeoHash(hash);
+
+            var lat = h.latitude[2];
+            var lng = h.longitude[2];
+
+            dataset.data.push({lat: lat, lng: lng, count: c});
+            dataset.max = Math.max(dataset.max, c);
+        }
+/*
+        for (var id in allItems) {
+            if (!allItems[id].marker.getVisible()) continue;
+            var p = allItems[id].latlng;
+            dataset.data.push({lat: p.lat(), lng: p.lng(), count: 1});
+        }
+*/
+        hoverlay.setDataSet(dataset);
+    }
+    
     var mapChangeTimer = Util.IdleTimer(1000, loadData);
     google.maps.event.addListener(map, 'bounds_changed', function() {
                                       mapChangeTimer.bump();
@@ -213,4 +284,9 @@ $(function()
         });
     
 
+    $("input.view").change(
+        function() { 
+            view = $("input.view:checked").val();
+            mapChangeTimer.bump();
+        });
 });

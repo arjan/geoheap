@@ -89,10 +89,10 @@ fetch(ObjectId) ->
 %% ------------------------------------------------------------------
 
 init(Args) ->
-    %% Setup subscriptions according to application environment
-    unsubscribe_all(),
-    {ok, Locations} = application:get_env(geoheap, instagram_locations),
     spawn(fun() ->
+                  %% Setup subscriptions according to application environment
+                  unsubscribe_all(),
+                  {ok, Locations} = application:get_env(geoheap, instagram_locations),
                   [subscribe(Long, Lat, Radius) ||
                       {Long, Lat, Radius} <- Locations]
           end),

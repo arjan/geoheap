@@ -62,7 +62,8 @@ geoquery(Req) ->
                        <<"true">> ->
                            Start = proplists:get_value(<<"start">>, All),
                            End = proplists:get_value(<<"end">>, All),
-                           [{facet_date, "{!ex=d}date", Start, End, "+1HOUR"}];
+                           [{facet_date, "{!ex=d}date", Start, End, "+1HOUR"},
+                            {facet, "geohash", "8"}];
                        _ ->
                            []
                    end,

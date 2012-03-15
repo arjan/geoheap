@@ -28,12 +28,16 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.8.16/jquery-ui.min.js"></script>
         <script src="/js/jquery.sparkline.min.js"></script>
+        <script src="http://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyDTANPAP5MppSlEEz0WLRsvdjk7A4CMe5w&sensor=false"></script>
+
+        <script src="/ext/heatmapjs/heatmap.js"></script>
+        <script src="/ext/heatmapjs/src/heatmap-gmaps.js"></script>
+        <script src="/ext/geohashjs/geohash.js"></script>
 
         <script src="/js/util.js"></script>
         <script src="/js/timebar.js"></script>
         <script src="/js/project.js"></script>
 
-        <script type="text/javascript" src="http://maps.googleapis.com/maps/api/js?libraries=geometry&key=AIzaSyDTANPAP5MppSlEEz0WLRsvdjk7A4CMe5w&sensor=false"></script>
     </head>
 
     <body>
@@ -63,6 +67,17 @@
             <h3>Filter</h3>
             <div class="control-group">
                 <div class="controls">
+                    <label class="radio inline">
+                        <input id="view-items" name="view" class="view" type="radio" value="items" checked="checked" />Items
+                    </label>
+                    <label class="radio inline">
+                        <input id="view-heatmap" name="view" class="view" type="radio" value="heatmap" />Heatmap
+                    </label>
+                </div>
+            </div>
+
+            <div class="control-group">
+                <div class="controls">
                     <label class="checkbox inline">
                         <input id="src-twitter" type="checkbox" class="source" value="1" checked="checked" />Twitter
                     </label>
@@ -70,7 +85,7 @@
                         <input id="src-instagram" type="checkbox" class="source" value="1" checked="checked" />Instagr.am
                     </label>
                     <label class="checkbox inline">
-                        <input id="src-vbdb" type="checkbox" class="source" value="1" checked="checked" />Verbeter de buurt
+                        <input id="src-vbdb" type="checkbox" class="source" value="1" checked="checked" /><acronym title="Verbeter de buurt">vbdb</acronym>
                     </label>
                 </div>
             </div>

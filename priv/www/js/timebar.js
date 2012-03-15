@@ -67,6 +67,11 @@
             //self.curtainRight.css({width: rw, left: self.zoom * w - rw});
         },
 
+        getBracket: function() {
+            var self = this;
+            return self.bracket;
+        },
+        
         setBracket: function(left, right, leftMoving) {
             var self = this;            
             

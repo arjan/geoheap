@@ -44,11 +44,13 @@ bson_to_solr(Document) ->
                    [0.0,0.0] -> [];
                    [X, Y] ->
                        Hash = geohash:encode(X, Y),
-                       Hashes = [{geohash, lists:flatten([io_lib:format("~1.16B", [N])
-                                                          | lists:sublist(Hash, N)])}
+                       Hashes = [lists:flatten([io_lib:format("~1.16B", [N])
+                                                | lists:sublist(Hash, N)])
                                  || N <- lists:seq(1,12)],
+                       H1 = [{geohash_6, lists:nth(6, Hashes)},{geohash_9, lists:nth(9, Hashes)},{geohash_c, lists:nth(12, Hashes)}],
+                       H2 = [{geohash, H} || H <- Hashes],
                        [{location, list_to_binary(lists:flatten(
-                                                    io_lib:format("~.5f,~.5f", [X+0.0, Y+0.0])))}|Hashes]
+                                                    io_lib:format("~.5f,~.5f", [X+0.0, Y+0.0])))}]++H1++H2
                end,
     Props2 = proplists:delete(original,
                               proplists:delete(location,
@@ -58,21 +60,6 @@ bson_to_solr(Document) ->
 
 json_to_bson(Json) ->
     decode_json(Json).
-
-
-bson_fields_to_solr(List) ->
-    bson_fields_to_solr(List, []).
-
-bson_fields_to_solr([], Acc) ->
-    lists:reverse(Acc);
-bson_fields_to_solr([{K, V=[{_,_}|_]}|Rest], Acc) ->
-    V1 = bson_fields_to_solr(V),
-    bson_fields_to_solr(Rest, [{K, V1}|Acc]);    
-bson_fields_to_solr([{K, V}|Rest], Acc) when is_atom(V) ->
-    bson_fields_to_solr(Rest, [{K, atom_to_list(V)}|Acc]);
-bson_fields_to_solr([{K, V}|Rest], Acc) ->
-    bson_fields_to_solr(Rest, [{K, V}|Acc]).
-
 
 
 doc_from_tweet(Tweet) ->

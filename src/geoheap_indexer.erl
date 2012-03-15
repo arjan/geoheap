@@ -59,7 +59,7 @@ reindex(Cursor, {Doc}, B, N) ->
 %% ------------------------------------------------------------------
 
 init(_Args) ->
-    esolr:set_auto_commit({time, 10000}),
+    esolr:set_auto_commit(false),
     {ok, #state{}}.
 
 handle_call({put, Document}, _From, State) ->
@@ -90,6 +90,7 @@ code_change(_OldVsn, State, _Extra) ->
 do_add(State=#state{pending=Pending}) ->
     lager:info("Adding ~p docs~n", [length(Pending)]),
     esolr:add(Pending),
+    esolr:commit(),
     State#state{pending=[], adder=undefined}.
 
 %% bump a commit timer
