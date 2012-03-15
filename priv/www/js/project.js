@@ -214,7 +214,7 @@ $(function()
     }
 
     // heatmap
-    var hoverlay = new HeatmapOverlay(map, {"radius":50, "visible":true, "opacity":70});
+    var hoverlay = new HeatmapOverlay(map, {"radius":50, "visible":true, "opacity":80});
 
     function refreshHeatmap(r) {
         var dataset = {data: [], max: 1};
