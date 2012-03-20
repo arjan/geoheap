@@ -199,7 +199,7 @@ $(function()
                     hoverlay.heatmap.setVisible(view == 'heatmap');
                     if (!incremental) {
                         for (var id in allItems) if (!hit[id]) allItems[id].marker.setVisible(false);
-                        if (view == 'heatmap') refreshHeatmap(r);
+                        //if (view == 'heatmap') refreshHeatmap(r);
                     }
                     if (lastnew && view == 'items') 
                         showInfoWindow(lastnew);
