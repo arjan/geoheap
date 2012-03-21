@@ -32,7 +32,7 @@
             self.setupLegend();
 
             self.bracketTimer = Util.IdleTimer(200, self.bracketChanged, self);
-            self.setDateBracket(new Date((now-7200)*1000), self.timeEnd);
+            self.setDateBracket(new Date((now-4*3600)*1000), self.timeEnd);
             self.refresh();
             self.setupDrag();
         },
