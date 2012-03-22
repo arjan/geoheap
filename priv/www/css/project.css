@@ -95,3 +95,16 @@ html,body {height: 100%; overflow: hidden;}
 .filtertool form {
     margin: 0;
 }
+
+
+@media (max-width:500px) {
+    .barContainer {
+        padding-bottom: 0;
+        right: 0; left: 0; bottom: 0;
+        margin: auto;
+    }
+
+    .filtertool {
+        bottom: 100px;
+    }
+}

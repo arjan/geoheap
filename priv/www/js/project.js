@@ -5,6 +5,28 @@
 
 $(function()
 {
+    var filtersShowing = true;
+
+    function showFilterTool() {
+        filtersShowing = true;
+        $(".filtertool-contents").show();
+        $("#apply-btn").show();
+        $("#hide-btn").text("Hide");
+    }
+
+    function hideFilterTool() {
+        $(".filtertool-contents").hide();
+        $("#apply-btn").hide();
+        $("#hide-btn").text("Show");
+        filtersShowing = false;
+    }
+
+    $("#hide-btn").click(
+        function() 
+        {
+            filtersShowing ? hideFilterTool() : showFilterTool();
+        });
+    
     var allSources = ['twitter', 'instagram', 'vbdb'];
 
     var hashToState = function(hash) {

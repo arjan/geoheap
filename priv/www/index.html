@@ -62,6 +62,7 @@
         </div>
 
         <div class="widget filtertool">
+            <div class="filtertool-contents">
             <form id="filter-form">
                 <img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
             <h3>Filter</h3>
@@ -95,8 +96,12 @@
                     <input class="span3" type="text" placeholder="Search term or screenname..." id="q" />
                 </div>
             </div>
+            </form>
+            </div>
             
-            <button class="btn btn-primary">Apply</button>
+            <button id="hide-btn" class="btn btn pull-right">Hide</button>
+            <button id="apply-btn" class="btn btn-primary">Apply</button>
+            
             <div id="stats" class="pull-right"></div>
 
         </form>
