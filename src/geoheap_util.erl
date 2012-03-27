@@ -75,7 +75,8 @@ doc_from_tweet(Tweet) ->
     FormattedDate = list_to_binary(dh_date:format("Y-m-d\TH:i:sZ", Date)),
     Location = case bson:lookup(geo, Tweet) of
                    {null} -> undefined;
-                   {{type, <<"Point">>, coordinates, P=[_,_]}} -> P
+                   {{type, <<"Point">>, coordinates, P=[_,_]}} -> P;
+                   {{coordinates,P2=[_,_],type,<<"Point">>}} -> P2
                end,
     {User} = bson:lookup(user, Tweet),
     {ScreenName} = bson:lookup(screen_name, User),
