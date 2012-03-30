@@ -152,6 +152,21 @@ $(function()
         }
     }
     
+    function linkURLS(inputString) {
+        var linkWithProtocol, linkWithoutProtocol, linkEmail, stringWithLink;
+        
+        var linkWithProtocol = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
+        var stringWithLink = inputString.replace(linkWithProtocol, '<a href="$1" target="_blank">$1</a>');
+        
+        var linkWithoutProtocol = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
+        var stringWithLink = inputString.replace(linkWithoutProtocol, '$1<a href="http://$2" target="_blank">$2</a>');
+        
+        var linkEmail = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
+        var stringWithLink = inputString.replace(linkEmail, '<a href="mailto:$1">$1</a>');
+        
+        return stringWithLink;
+    }
+    
     var infowindow = new google.maps.InfoWindow({disableAutoPan: true});
 
     function showInfoWindow(item)
@@ -161,7 +176,7 @@ $(function()
             var html = "";
             html += "<p>" + item.fullName() + " @ " + detail.date + "</p>";
             if (detail.thumbnail) html +="<p style=\"height:150px\"><img src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
-            if (detail.text) html +="<p><strong>"+detail.text+"</strong></p>";
+            if (detail.text) html +="<p><strong>"+linkURLS(detail.text)+"</strong></p>";
             infowindow.setContent(html);
             infowindow.setPosition(item.latlng);
             infowindow.open(map);
