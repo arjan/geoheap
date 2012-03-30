@@ -9,7 +9,7 @@ NAME="solr"
 PIDFILE="/home/arjan/solr-production.pid"
 LOG_FILE="/home/arjan/solr-production.log"
 SOLR_DIR="/home/arjan/geoheap/priv/solr/"
-JAVA_OPTIONS="-Xms 1024M -Xmx1800m -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar"
+JAVA_OPTIONS="-Xms1024m -Xmx1800m -DSTOP.PORT=8079 -DSTOP.KEY=stopkey -jar start.jar"
 JAVA="sudo -u arjan /usr/bin/java"
 
 start() {
