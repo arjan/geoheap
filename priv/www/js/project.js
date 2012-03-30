@@ -152,19 +152,17 @@ $(function()
         }
     }
     
-    function linkURLS(inputString) {
-        var linkWithProtocol, linkWithoutProtocol, linkEmail, stringWithLink;
-        
+    function linkURLS(text) {
         var linkWithProtocol = /(\b(https?|ftp):\/\/[-A-Z0-9+&@#\/%?=~_|!:,.;]*[-A-Z0-9+&@#\/%=~_|])/gim;
-        var stringWithLink = inputString.replace(linkWithProtocol, '<a href="$1" target="_blank">$1</a>');
+        text = text.replace(linkWithProtocol, '<a href="$1" target="_blank">$1</a>');
         
         var linkWithoutProtocol = /(^|[^\/])(www\.[\S]+(\b|$))/gim;
-        var stringWithLink = inputString.replace(linkWithoutProtocol, '$1<a href="http://$2" target="_blank">$2</a>');
+        text = text.replace(linkWithoutProtocol, '$1<a href="http://$2" target="_blank">$2</a>');
         
         var linkEmail = /(\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,6})/gim;
-        var stringWithLink = inputString.replace(linkEmail, '<a href="mailto:$1">$1</a>');
+        text = text.replace(linkEmail, '<a href="mailto:$1">$1</a>');
         
-        return stringWithLink;
+        return text;
     }
     
     var infowindow = new google.maps.InfoWindow({disableAutoPan: true});
