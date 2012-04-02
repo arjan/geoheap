@@ -76,6 +76,9 @@ $(function()
             this.fullName = function() {
                 return this.data.original.user.name;
             };
+            this.userURL = function() {
+                return "http://www.twitter.com/#!/" + this.data.original.user.screen_name;
+            };
             this.markerImage = function() {
                 return "/img/blue.png";
             };
@@ -85,6 +88,9 @@ $(function()
             this.fullName = function() {
                 return this.data.original.user.full_name;
             };
+            this.userURL = function() {
+                return this.data.original.link;
+            };
             this.markerImage = function() {
                 return "/img/red.png";
             };
@@ -93,6 +99,9 @@ $(function()
         'vbdb': function() {
             this.fullName = function() {
                 return 'Verbeter de Buurt';
+            };
+            this.userURL = function() {
+                return "";
             };
             this.markerImage = function() {
                 return "/img/green.png";
@@ -172,7 +181,7 @@ $(function()
         var showitem = function(detail) {
             $.extend(item.data, detail);
             var html = "";
-            html += "<p>" + item.fullName() + " @ " + detail.date + "</p>";
+            html += "<p><a href=\"" + item.userURL() + "\" target=\"_blank\">" item.fullName() + "</a>" " @ " + detail.date + "</p>";
             if (detail.thumbnail) html +="<p style=\"height:150px\"><img src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
             if (detail.text) html +="<p><strong>"+linkURLS(detail.text)+"</strong></p>";
             infowindow.setContent(html);
