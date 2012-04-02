@@ -183,7 +183,7 @@ $(function()
             var html = "";
             html += "<div class=\"infowindow-container\">";
             html += "<div class=\"infowindow-header\"><a href=\"" + item.userURL() + "\" target=\"_blank\">" + item.fullName() + "</a>";
-            html += "<div class=\"infowindow-timestamp\"> @ " + detail.date + "</div>";
+            html += "<div class=\"infowindow-timestamp\">" + detail.date + "</div>";
             if (detail.thumbnail) html +="<img class=\"infowindow-image\" src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" />";
             if (detail.text) html +="<div class=\"infowindow-text\">"+linkURLS(detail.text)+"</div>";
             html += "</div>";
