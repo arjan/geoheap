@@ -20,45 +20,6 @@ textarea{overflow:auto;vertical-align:top;}
 body{margin:0;font-family:"Cabin",Helvetica,Arial,sans-serif;font-size:14px;line-height:17px;font-weight:400;color:#333333;background-color:#ffffff;}
 a{color:#0088cc;text-decoration:none;}
 a:hover{color:#005580;text-decoration:underline;}
-div.infowindow-container {
-  max-width: 300px;
-  padding:
-}  
-div.infowindow-header {
-  width:100%;
-  margin: 0 0 2px 0;
-}
-div.infowindow-header a {
-  text-decoration: underline;
-  color:#333;
-}
-div.infowindow-header a:hover {
-  text-decoreation: underline;
-  color:#5d9000;
-}
-div.infowindow-timestamp {
-  font-size: 12px;
-  line-height: 15px;
-  margin: 0 0 6px 0;
-}
-div.infowindow-image {
-  margin: 0 0 6px 0;
-  padding: 0;
-  border: 0;
-}
-div.infowindow-text {
-  font-size: 16px;
-  line-height: 19px;
-  font-weight: 600;
-}
-div.infowindow-text a {
-  text-decoration: none;
-  color: #5d9000;
-}
-div.infowindow-text a:hover {
-  text-decoration: underline;
-  color: #5d9000;
-}
 .row{margin-left:-20px;*zoom:1;}.row:before,.row:after{display:table;content:"";}
 .row:after{clear:both;}
 [class*="span"]{float:left;margin-left:20px;}
