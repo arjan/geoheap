@@ -181,9 +181,10 @@ $(function()
         var showitem = function(detail) {
             $.extend(item.data, detail);
             var html = "";
-            html += "<p><a href=\"" + item.userURL() + "\" target=\"_blank\">" item.fullName() + "</a>" " @ " + detail.date + "</p>";
-            if (detail.thumbnail) html +="<p style=\"height:150px\"><img src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" /></p>";
-            if (detail.text) html +="<p><strong>"+linkURLS(detail.text)+"</strong></p>";
+            html += "<div class=\"infowindow-header\"><a href=\"" + item.userURL() + "\" target=\"_blank\">" + item.fullName() + "</a>";
+            html += "<div class=\"infowindow-timestamp\"> @ " + detail.date + "</div>"
+            if (detail.thumbnail) html +="<img class=\"infowindow-image\" src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" />";
+            if (detail.text) html +="<div class=\"infowindow-text\">"+linkURLS(detail.text)+"</div>";
             infowindow.setContent(html);
             infowindow.setPosition(item.latlng);
             infowindow.open(map);
