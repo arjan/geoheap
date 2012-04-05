@@ -137,6 +137,7 @@ div.infowindow-image {
   margin: 0 0 6px 0;
   padding: 0;
   border: 0;
+  height: 150px;
 }
 div.infowindow-text {
   font-size: 16px;
