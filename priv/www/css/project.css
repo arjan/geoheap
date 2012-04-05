@@ -88,6 +88,10 @@ html,body {height: 100%; overflow: hidden;}
     width: 220px;
 }
 
+.filtertool h3 {
+    line-height: 18px;
+}
+
 .navbar {
     margin: 0;
 }
@@ -147,3 +151,4 @@ div.infowindow-text a:hover {
   text-decoration: underline;
   color: #5d9000;
 }
+
