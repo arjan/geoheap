@@ -8,19 +8,19 @@ Util = {
             + pad(d.getMinutes());
     },
     
-    ISODateString: function(d)
+    FriendlyDateString: function(d)
     {
         function pad(n){return n<10 ? '0'+n: n;}
-        var m = ['Januari', 'Februari', 'Maart', 'April', 'Mei', 'Juni', 'Juli', 'Augustus', 'September', 'Oktober', 'November', 'December'];
-        return pad(d.getUTCDate())+' '
-            + m[d.getUTCMonth()]+' '
-            + d.getUTCFullYear()+', '
-            + pad(d.getUTCHours())+':'
-            + pad(d.getUTCMinutes());
+        var m = ['januari', 'februari', 'maart', 'april', 'mei', 'juni', 'juli', 'augustus', 'september', 'oktober', 'november', 'december'];
+        return d.getDate()+' '
+            + m[d.getMonth()]+' '
+            + d.getFullYear()+', '
+            + pad(d.getHours())+':'
+            + pad(d.getMinutes());
         
     },
   
-/*    ISODateString: function(d)
+    ISODateString: function(d)
     {
         function pad(n){return n<10 ? '0'+n : n;}
         return d.getUTCFullYear()+'-'
@@ -29,7 +29,7 @@ Util = {
             + pad(d.getUTCHours())+':'
             + pad(d.getUTCMinutes())+':'
             + pad(d.getUTCSeconds())+'Z';
-    },*/
+    },
 
     PubSub:  {
         _subs: {},

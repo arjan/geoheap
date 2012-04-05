@@ -17,18 +17,12 @@ function touchHandler(event)
         default: return;
     }
 
-             //initMouseEvent(type, canBubble, cancelable, view, clickCount,
-    //           screenX, screenY, clientX, clientY, ctrlKey,
-    //           altKey, shiftKey, metaKey, button, relatedTarget);
-    
     var simulatedEvent = document.createEvent("MouseEvent");
     simulatedEvent.initMouseEvent(type, true, true, window, 1,
                               first.screenX, first.screenY,
                               first.clientX, first.clientY, false,
                               false, false, false, 0/*left*/, null);
-
-                                                                                 first.target.dispatchEvent(simulatedEvent);
-//    event.preventDefault();
+    first.target.dispatchEvent(simulatedEvent);
 }
 
 document.addEventListener("touchstart", touchHandler, true);
@@ -187,7 +181,7 @@ $(function()
             var html = "";
             html += "<div class=\"infowindow-container\">";
             html += "<div class=\"infowindow-header\"><a href=\"" + item.userURL() + "\" target=\"_blank\">" + item.fullName() + "</a>";
-            html += "<div class=\"infowindow-timestamp\">" + detail.date + "</div>";
+            html += "<div class=\"infowindow-timestamp\">" + Util.FriendlyDateString(new Date(detail.date)) + "</div>";
             if (detail.thumbnail) html +="<img class=\"infowindow-image\" src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" />";
             if (detail.text) html +="<div class=\"infowindow-text\">"+linkURLS(detail.text)+"</div>";
             html += "</div>";
