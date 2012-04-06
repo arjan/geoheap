@@ -133,7 +133,7 @@ div.infowindow-timestamp {
   line-height: 15px;
   margin: 0 0 6px 0;
 }
-div.infowindow-image, div.infowindow-image img {
+img.infowindow-image {
   margin: 0 0 6px 0;
   padding: 0;
   border: 0;
