@@ -118,7 +118,7 @@ div.infowindow-container {
 }  
 div.infowindow-header {
   width:100%;
-  margin: 0 0 2px 0;
+  margin: 0 0 3px 0;
 }
 div.infowindow-header a {
   text-decoration: underline;
@@ -133,7 +133,7 @@ div.infowindow-timestamp {
   line-height: 15px;
   margin: 0 0 6px 0;
 }
-div.infowindow-image {
+div.infowindow-image, div.infowindow-image img {
   margin: 0 0 6px 0;
   padding: 0;
   border: 0;
