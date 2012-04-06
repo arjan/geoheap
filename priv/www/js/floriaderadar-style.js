@@ -190,5 +190,5 @@ $(function()
         }
     ];
     
-    window.FloriadeRadarStyle = new google.maps.StyledMapType(styledMapStyleset, {name:"FloriadeRadar"});
+    window.FloriadeRadarStyle = new google.maps.StyledMapType(styledMapStyleset, {name:"Floriade Radar"});
 });
