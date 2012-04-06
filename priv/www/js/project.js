@@ -120,14 +120,14 @@ $(function()
         center: new google.maps.LatLng(52.310550, 4.957151),
         zoom: 13,
         mapTypeControlOptions: {
-            mapTypeIds: ['FloriadeRadar', google.maps.MapTypeId.ROADMAP]
+            mapTypeIds: ['Floriade Radar', google.maps.MapTypeId.SATELLITE]
         }
     };
     var map = new google.maps.Map(document.getElementById("map"),
                                   myOptions);
 
-    map.mapTypes.set('FloriadeRadar', window.FloriadeRadarStyle);
-    map.setMapTypeId('FloriadeRadar');
+    map.mapTypes.set('Floriade Radar', window.FloriadeRadarStyle);
+    map.setMapTypeId('Floriade Radar');
 
     var getState = function() {
         var c = map.getCenter();
