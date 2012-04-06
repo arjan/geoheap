@@ -114,7 +114,7 @@ html,body {height: 100%; overflow: hidden;}
 }
 div.infowindow-container {
   max-width: 300px;
-  padding:
+  padding: 0 0 10px 0;
 }  
 div.infowindow-header {
   width:100%;
