@@ -133,7 +133,7 @@ $(function()
         var c = map.getCenter();
         var sources = [];
         $("input.source:checked").each(function() { sources.push($(this).attr("id").substr(4));});
-        return [c.lat(), c.lng(), map.getZoom(),sources, view, timebar.getBracket()];
+        return [c.lat(), c.lng(), map.getZoom(),sources, view, timebar.getBracket(), Util.ISODateString(timebar.getTimeStart())];
     };
     var applyState = function(state) {
         map.setCenter(new google.maps.LatLng(state[0], state[1]));
@@ -142,6 +142,7 @@ $(function()
         view = state[4];
         $("input.view").removeAttr("checked");
         $("#view-" + view).attr("checked", "checked");
+//FIXME        timebar.setTimeStart(new Date(state[6]));
         timebar.setBracket(state[5][0], state[5][1]);
     };
 

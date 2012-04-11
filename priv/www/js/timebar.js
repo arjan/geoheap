@@ -12,6 +12,10 @@
 
             var now = (new Date()).getTime()/1000;
             now = (now - now % 3600) + 3600;
+
+            self.timeStartMaximum = new Date((now-3600*48*1)*1000);
+            self.timeStartMinimum = new Date((now-3600*24*60)*1000);
+
             self.timeStart = new Date((now-3600*24*7)*1000);
             self.timeEnd = new Date(now*1000);
 
@@ -20,9 +24,7 @@
             self.pan = 0.0;
             
             self.inner = $("<div>").addClass("inner").appendTo(self.element);
-                
             self.sparkline = $("<div>").addClass("bars").appendTo(self.inner);
-
 
             self.curtainLeft = $("<div>").addClass("curtain").appendTo(self.inner);
             self.curtainRight = $("<div>").addClass("curtain").appendTo(self.inner);
@@ -37,6 +39,16 @@
             self.setupDrag();
         },
 
+        getTimeStart: function() {
+            var self = this;
+            return self.timeStart;
+        },
+
+        setTimeStart: function(d) {
+            self.timeStart = d;
+            self.refresh();
+        },
+        
         setData: function(data) {
             var self = this;
             self.data = [];
@@ -56,11 +68,11 @@
 
             var w = self.element.width() - 2*self.bracketLeft.width();
 
-            //self.sparkline.empty().sparkline(self.data, {height: self.barHeight, width: self.zoom * w});
             self.sparkline.empty().sparkline(self.data, {
                                                  type: 'bar',
                                                  barWidth: (self.zoom*w)/self.data.length - 1,
                                                  barSpacing: 1,
+                                                 barColor: 'green',
                                                  height: self.barHeight, width: self.zoom * w});
             //self.curtainLeft.css({width: self.bracket[0] * self.zoom * w});
             var rw = (1-self.bracket[1]) * self.zoom * w;
@@ -88,7 +100,8 @@
             right = Math.max(0, Math.min(1, right));
 
             var n = (self.timeEnd.getTime()-self.timeStart.getTime()) / (1000*900); // 15 minute increment
-            left = Math.floor(left*n)/n;
+            if (left > 0.05)
+                left = Math.floor(left*n)/n;
             right = Math.floor(right*n)/n;
 
             self.curtainLeft.css({width: d+left * w});
@@ -157,8 +170,24 @@
             self.setPan(1/totalw * px);
         },
 
+        /** 
+         * Adds an amount of seconds to the start time. Returns
+           whether or not the time has changed (e.g. if it is still
+           within the min/max boundaries) */
+        addToStartTime: function(seconds) {
+            var self = this, original = self.timeStart.getTime();
+            self.timeStart = new Date(Math.max(self.timeStartMinimum, Math.min(self.timeStartMaximum, self.timeStart.getTime()+1000*seconds)));
+            return original != self.timeStart.getTime();
+        },
+        
         setDateBracket: function(start, end) {
             var self = this;
+
+            start = new Date(Math.max(self.timeStartMinimum, Math.min(self.timeStartMaximum, start)));
+            if (start <= self.timeStart) {
+                self.timeStart = start;
+            }
+
             var d = self.timeEnd.getTime() - self.timeStart.getTime();
             var right = (end.getTime()-self.timeStart.getTime())/d;
             var left = (start.getTime()-self.timeStart.getTime())/d;
@@ -199,14 +228,54 @@
                                var ox = e.pageX;
                                self.dragging = true;           
                                var start = self.bracket[0];
+
+                               var zoomInterval = null;
+                               function clearZoomInterval() {
+                                   clearInterval(zoomInterval);
+                                   zoomInterval = null;
+                               }
+                               var lastUpdate = new Date();
+                               
                                $(document)
                                    .bind('mousemove.timebar', function(e) {
                                              var w = self.element.width();
                                              var b = start + (e.pageX - ox)/w;
-                                             self.setBracket(b, self.bracket[1], true);
-                                             self.bracketTimer.bump();
+
+                                             // dragging in the leftmost region will cause the timebar to zoom out
+                                             if (b <= 0.05) {
+                                                 if (zoomInterval) clearZoomInterval();
+                                                 zoomInterval = setInterval(function() {
+                                                                                if (!self.addToStartTime(-3600)) return;
+                                                                                self.setBracket(0.05, self.bracket[1]);
+                                                                                self.data.unshift(0); // add temporary zero datapoint
+                                                                                self.refresh();
+                                                                                if ((new Date()) - lastUpdate > 2000) {
+                                                                                    self.bracketTimer.bump();
+                                                                                    lastUpdate = new Date();
+                                                                                }
+                                                                            }, 50);
+                                             } else if (0.45 < b && b < 0.55) {
+                                                 if (zoomInterval) clearZoomInterval();
+                                                 zoomInterval = setInterval(function() {
+                                                                                if (!self.addToStartTime(3600)) return;
+                                                                                self.setBracket(0.5, self.bracket[1]);
+                                                                                self.data.shift(); // remove a datapoint
+                                                                                self.refresh();
+                                                                                if ((new Date()) - lastUpdate > 2000) {
+                                                                                    self.bracketTimer.bump();
+                                                                                    lastUpdate = new Date();
+                                                                                }
+                                                                            }, 50);
+
+                                             } else {
+                                                 clearZoomInterval();
+                                                 self.setBracket(b, self.bracket[1], true);
+                                                 self.bracketTimer.bump();
+                                             }
+
                                          })
                                    .bind('mouseup.timebar', function(e) {
+                                             clearZoomInterval();
                                              $(this).unbind('mousemove.timebar');
                                              $(this).unbind('mouseup.timebar');
                                              self.dragging = false;                               
@@ -237,14 +306,6 @@
         setupLegend: function() {
             var self = this;
             self.legend = $("<div>").addClass("legend").appendTo(self.inner);
-            /*
-            $("<span>")
-                .html(Util.timebarDate(self.timeStart)).appendTo(self.legend);
-            $("<span>")
-                .addClass("right")
-                .css({right: 0})
-                .html(Util.timebarDate(self.timeEnd)).appendTo(self.legend);
-             */
             self.legendLeft = $("<span>")
                 .html("xx").appendTo(self.legend);
             self.legendRight = $("<span>")
