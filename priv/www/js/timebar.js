@@ -261,10 +261,6 @@
                                                                                 self.setBracket(0.5, self.bracket[1]);
                                                                                 self.data.shift(); // remove a datapoint
                                                                                 self.refresh();
-                                                                                if ((new Date()) - lastUpdate > 2000) {
-                                                                                    self.bracketTimer.bump();
-                                                                                    lastUpdate = new Date();
-                                                                                }
                                                                             }, 50);
 
                                              } else {
@@ -279,6 +275,7 @@
                                              $(this).unbind('mousemove.timebar');
                                              $(this).unbind('mouseup.timebar');
                                              self.dragging = false;                               
+                                             self.bracketTimer.bump();
                                          });
                            });
             self.bracketRight
