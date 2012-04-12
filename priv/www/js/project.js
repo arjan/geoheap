@@ -243,7 +243,7 @@ $(function()
                     lastLoad = new Date();
                     lastNumResults = incremental ? (lastNumResults + r.response.numFound) : r.response.numFound;
                     var html = "";
-                    html += "<div>Results: " + lastNumResults + "</div>";
+                    html += "<div>Aantal: " + lastNumResults + " </div>";
                     $("#stats").html(html);
 
                     if (r.facet_counts) {
