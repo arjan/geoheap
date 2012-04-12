@@ -70,8 +70,8 @@
 
             self.sparkline.empty().sparkline(self.data, {
                                                  type: 'bar',
-                                                 barWidth: (self.zoom*w)/self.data.length - 1,
-                                                 barSpacing: 1,
+                                                 barWidth: (self.zoom*w)/self.data.length,
+                                                 barSpacing: 0,
                                                  barColor: 'green',
                                                  height: self.barHeight, width: self.zoom * w});
             //self.curtainLeft.css({width: self.bracket[0] * self.zoom * w});

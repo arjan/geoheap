@@ -86,9 +86,13 @@ html,body {height: 100%; overflow: hidden;}
 }
 
 .filtertool {
-    bottom: 128px;
+    bottom: 108px;
     right: 7px;
-    width: 220px;
+    width: 290px;
+}
+
+.filtertool input.q {
+    width: 280px;
 }
 
 .filtertool h3 {
@@ -115,6 +119,7 @@ html,body {height: 100%; overflow: hidden;}
         bottom: 100px;
     }
 }
+
 div.infowindow-container {
   max-width: 300px;
   padding: 0 0 10px 0;

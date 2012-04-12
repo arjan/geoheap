@@ -68,14 +68,14 @@
             <div class="filtertool-contents">
             <form id="filter-form">
                 <img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
-            <h3>Filter</h3>
+
             <div class="control-group">
                 <div class="controls">
                     <label class="radio inline">
                         <input id="view-items" name="view" class="view" type="radio" value="items" checked="checked" />Items
                     </label>
                     <label class="radio inline">
-                        <input id="view-heatmap" name="view" class="view" type="radio" value="heatmap" />Heatmap
+                        <input id="view-heatmap" name="view" class="view" type="radio" value="heatmap" />Hittekaart
                     </label>
                 </div>
             </div>
@@ -89,21 +89,21 @@
                         <input id="src-instagram" type="checkbox" class="source" value="1" checked="checked" />Instagr.am
                     </label>
                     <label class="checkbox inline">
-                        <input id="src-vbdb" type="checkbox" class="source" value="1" checked="checked" /><acronym title="Verbeter de buurt">vbdb</acronym>
+                        <input id="src-vbdb" type="checkbox" class="source" value="1" checked="checked" />Verbeter de buurt
                     </label>
                 </div>
             </div>
 
             <div class="control-group">
                 <div class="controls">
-                    <input class="span3" type="text" placeholder="Search term or screenname..." id="q" />
+                    <input class="q" type="text" placeholder="Voer zoekterm in..." id="q" />
                 </div>
             </div>
             </form>
             </div>
             
-            <button id="hide-btn" class="btn btn pull-right">Hide</button>
-            <button id="apply-btn" class="btn btn-primary">Apply</button>
+            <button id="hide-btn" class="btn btn pull-right">Verberg</button>
+            <button id="apply-btn" class="btn btn-primary">OK</button>
             
             <div id="stats" class="pull-right"></div>
 

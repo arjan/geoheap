@@ -39,14 +39,18 @@ $(function()
         filtersShowing = true;
         $(".filtertool-contents").show();
         $("#apply-btn").show();
-        $("#hide-btn").text("Hide");
+        $("#stats").show();
+        $("#hide-btn").text("Verberg").blur();
+        $(".filtertool").css("width", "auto");
     }
 
     function hideFilterTool() {
         $(".filtertool-contents").hide();
         $("#apply-btn").hide();
-        $("#hide-btn").text("Show");
+        $("#stats").hide();
+        $("#hide-btn").text("Filter").blur();
         filtersShowing = false;
+        $(".filtertool").css("width", 50);
     }
 
     $("#hide-btn").click(
@@ -120,14 +124,14 @@ $(function()
         center: new google.maps.LatLng(52.310550, 4.957151),
         zoom: 13,
         mapTypeControlOptions: {
-            mapTypeIds: ['Floriade Radar', google.maps.MapTypeId.SATELLITE]
+            mapTypeIds: ['FloriadeRadar']
         }
     };
     var map = new google.maps.Map(document.getElementById("map"),
                                   myOptions);
 
-    map.mapTypes.set('Floriade Radar', window.FloriadeRadarStyle);
-    map.setMapTypeId('Floriade Radar');
+    map.mapTypes.set('FloriadeRadar', window.FloriadeRadarStyle);
+    map.setMapTypeId('FloriadeRadar');
 
     var getState = function() {
         var c = map.getCenter();
