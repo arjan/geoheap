@@ -67,7 +67,13 @@ $(function()
     var stateToHash = function(state) {
         return encodeURIComponent(JSON.stringify(state));
     };
-
+	var mapMarkerLevel = function() {
+		return Math.max(0,Math.ceil((map.getZoom()/2.0)-5));
+		console.log(mapMarkerLevel());
+	}
+	var redMarkers = new Array("/img/red/1.png","/img/red/2.png","/img/red/3.png","/img/red/4.png","/img/red/5.png","/img/red/6.png","/img/red/7.png","/img/red/8.png","/img/red/9.png");
+	var blueMarkers = new Array("/img/blue/1.png","/img/blue/2.png","/img/blue/3.png","/img/blue/4.png","/img/blue/5.png","/img/blue/6.png","/img/blue/7.png","/img/blue/8.png","/img/blue/9.png");
+	var greenMarkers = new Array("/img/green/1.png","/img/green/2.png","/img/green/3.png","/img/green/4.png","/img/green/5.png","/img/green/6.png","/img/green/7.png","/img/green/8.png","/img/green/9.png");
     var ItemMapping = {
         'twitter': function(item) 
         {
@@ -78,7 +84,8 @@ $(function()
                 return "http://www.twitter.com/#!/" + this.data.original.user.screen_name;
             };
             this.markerImage = function() {
-                return "/img/blue.png";
+                //return "/img/blue.png";
+				return blueMarkers[mapMarkerLevel()];
             };
             return this;
         },
@@ -90,7 +97,7 @@ $(function()
                 return this.data.original.link;
             };
             this.markerImage = function() {
-                return "/img/red.png";
+                return redMarkers[mapMarkerLevel()];
             };
             return this;
         },
@@ -102,7 +109,7 @@ $(function()
                 return "";
             };
             this.markerImage = function() {
-                return "/img/green.png";
+                return greenMarkers[mapMarkerLevel()];
             };
             return this;
         }
@@ -200,6 +207,8 @@ $(function()
                });
     }
     google.maps.event.addListener(map, 'click', function(){infowindow.close();});
+	
+	
 
     
     function loadData(incremental)
@@ -261,9 +270,14 @@ $(function()
                                                 var el = this;
                                                 hit[el.id] = true;
                                                 if (el.id in allItems) {
-                                                    if (view == 'items') allItems[el.id].marker.setVisible(true);
+                                                    if (view == 'items') {
+														allItems[el.id].marker.setVisible(true);
+														if(allItems[el.id].data.source=='twitter') allItems[el.id].marker.setIcon(blueMarkers[mapMarkerLevel()]);
+														if(allItems[el.id].data.source=='instagram') allItems[el.id].marker.setIcon(redMarkers[mapMarkerLevel()]);
+														if(allItems[el.id].data.source=='vbdb') allItems[el.id].marker.setIcon(greenMarkers[mapMarkerLevel()]);
+													}
                                                     return;
-                                                }
+                                                };
                                                 var item = ItemFactory(el);
                                                 google.maps.event.addListener(item.marker, 'click', function(){showInfoWindow(item);});
                                                 numnew++;
@@ -274,8 +288,9 @@ $(function()
                                                         lastnew = item;
                                                 }
                                                 allItems[item.data.id] = item;
-                                                if (view != 'items') allItems[el.id].marker.setVisible(false);
+                                                if (view != 'items') {allItems[el.id].marker.setVisible(false)};
                                                 item.marker.setMap(map);
+												
                                             });
                     if (view == 'heatmap') {
                         for (var i in allItems) allItems[i].marker.setVisible(false);
