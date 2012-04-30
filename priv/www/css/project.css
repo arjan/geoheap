@@ -88,11 +88,11 @@ html,body {height: 100%; overflow: hidden;}
 .filtertool {
     bottom: 108px;
     right: 7px;
-    width: 290px;
+    width: 200px;
 }
 
 .filtertool input.q {
-    width: 280px;
+  
 }
 
 .filtertool h3 {
@@ -163,5 +163,20 @@ div.infowindow-text a {
 div.infowindow-text a:hover {
   text-decoration: underline;
   color: #5d9000;
+}
+div.clear {
+	clear:both;
+	float:none;
+	height: 0;
+	margin:0;
+	padding: 0;
+	
+}
+div.wordcloud {
+	margin: 0 0 10px 0;
+	
+}
+div.wordcloud a {
+	display:block;
 }
 

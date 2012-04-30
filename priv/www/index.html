@@ -67,16 +67,16 @@
         <div class="widget filtertool">
             <div class="filtertool-contents">
             <form id="filter-form">
-                <img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
 
             <div class="control-group">
                 <div class="controls">
-                    <label class="radio inline">
+                    <label class="radio inline active">
                         <input id="view-items" name="view" class="view" type="radio" value="items" checked="checked" />Items
                     </label>
                     <label class="radio inline">
                         <input id="view-heatmap" name="view" class="view" type="radio" value="heatmap" />Hittekaart
                     </label>
+                    <div class="clear"></div>
                 </div>
             </div>
 
@@ -102,8 +102,16 @@
             </form>
             </div>
             
+            <div class="wordcloud">
+            	<a href="#">WOrd 1</a>
+                <a href="#">word 2</a>
+                <a href="#">word 71</a>
+                <a href="#">word 39,000</a>
+            </div>
+            
             <button id="hide-btn" class="btn btn pull-right">Verberg</button>
             <button id="apply-btn" class="btn btn-primary">OK</button>
+                            <img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
             
             <div id="stats" class="pull-right"></div>
 

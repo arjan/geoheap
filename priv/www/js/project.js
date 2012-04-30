@@ -84,7 +84,6 @@ $(function()
                 return "http://www.twitter.com/#!/" + this.data.original.user.screen_name;
             };
             this.markerImage = function() {
-                //return "/img/blue.png";
 				return blueMarkers[mapMarkerLevel()];
             };
             return this;
@@ -130,6 +129,12 @@ $(function()
     var myOptions = {
         center: new google.maps.LatLng(52.310550, 4.957151),
         zoom: 13,
+		disableDefaultUI: true,
+		streetViewControl: true,
+		zoomControl: true,
+ 		zoomControlOptions: {
+			style: google.maps.ZoomControlStyle.SMALL
+		},
         mapTypeControlOptions: {
             mapTypeIds: ['FloriadeRadar']
         }
@@ -252,7 +257,7 @@ $(function()
                     lastLoad = new Date();
                     lastNumResults = incremental ? (lastNumResults + r.response.numFound) : r.response.numFound;
                     var html = "";
-                    html += "<div>Aantal: " + lastNumResults + " </div>";
+                    html += "<div>Aantal: " + lastNumResults + "&nbsp; </div>";
                     $("#stats").html(html);
 
                     if (r.facet_counts) {
