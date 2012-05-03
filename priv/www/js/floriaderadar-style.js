@@ -77,6 +77,12 @@ $(function()
                 { lightness: 30 }
             ]
         },{
+			featureType: "road",
+			elementType: "labels",
+			stylers: [
+			  { visibility: "off" }
+			]
+		},{
             featureType: "transit.station.rail",
             elementType: "labels",
             stylers: [

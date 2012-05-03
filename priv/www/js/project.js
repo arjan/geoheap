@@ -40,6 +40,7 @@ $(function()
         $(".filtertool-contents").show();
         $("#apply-btn").show();
         $("#stats").show();
+        $(".wordcloud").show();
         $("#hide-btn").text("Verberg").blur();
         $(".filtertool").css("width", "auto");
     }
@@ -49,6 +50,8 @@ $(function()
         $("#apply-btn").hide();
         $("#stats").hide();
         $("#hide-btn").text("Filter").blur();
+        $(".wordcloud").hide();
+        $("#loader").hide();
         filtersShowing = false;
         $(".filtertool").css("width", 50);
     }
@@ -68,7 +71,7 @@ $(function()
         return encodeURIComponent(JSON.stringify(state));
     };
 	var mapMarkerLevel = function() {
-		return Math.max(0,Math.ceil((map.getZoom()/2.0)-5));
+		return Math.max(0,Math.ceil((map.getZoom()/2.0)-3));
 		console.log(mapMarkerLevel());
 	}
 	var redMarkers = new Array("/img/red/1.png","/img/red/2.png","/img/red/3.png","/img/red/4.png","/img/red/5.png","/img/red/6.png","/img/red/7.png","/img/red/8.png","/img/red/9.png");
@@ -131,9 +134,13 @@ $(function()
         zoom: 13,
 		disableDefaultUI: true,
 		streetViewControl: true,
+		streetViewControlOptions: {
+        	position: google.maps.ControlPosition.TOP_LEFT
+    	},
 		zoomControl: true,
  		zoomControlOptions: {
-			style: google.maps.ZoomControlStyle.SMALL
+			style: google.maps.ZoomControlStyle.SMALL,
+			position: google.maps.ControlPosition.TOP_LEFT
 		},
         mapTypeControlOptions: {
             mapTypeIds: ['FloriadeRadar']
@@ -158,6 +165,7 @@ $(function()
         view = state[4];
         $("input.view").removeAttr("checked");
         $("#view-" + view).attr("checked", "checked");
+		$("#view-" + view).parent().addClass('active');
 //FIXME        timebar.setTimeStart(new Date(state[6]));
         timebar.setBracket(state[5][0], state[5][1]);
     };
@@ -196,12 +204,12 @@ $(function()
         var showitem = function(detail) {
             $.extend(item.data, detail);
             var html = "";
-            html += "<div class=\"infowindow-container\">";
-            html += "<div class=\"infowindow-header\"><a href=\"" + item.userURL() + "\" target=\"_blank\">" + item.fullName() + "</a>";
-            html += "<div class=\"infowindow-timestamp\">" + Util.FriendlyDateString(new Date(detail.date)) + "</div>";
-            if (detail.thumbnail) html +="<img class=\"infowindow-image\" src=\""+detail.thumbnail+"\" width=\"150\" height=\"150\" />";
-            if (detail.text) html +="<div class=\"infowindow-text\">"+linkURLS(detail.text)+"</div>";
-            html += "</div>";
+            html += '<div class="infowindow-container">';
+            html += '<div class="infowindow-header"><a href="' + item.userURL() + '" target="_blank">' + item.fullName() + '</a>';
+            html += '<div class="infowindow-timestamp">' + Util.FriendlyDateString(new Date(detail.date)) + '</div>';
+            if (detail.thumbnail) html += '<a href="'+item.userURL()+'" target="_blank"><img class="infowindow-image" src="'+detail.thumbnail+'" width="150" height="150" /></a>';
+            if (detail.text) html += '<div class="infowindow-text\">'+linkURLS(detail.text)+'</div>';
+            html += '</div>';
             infowindow.setContent(html);
             infowindow.setPosition(item.latlng);
             infowindow.open(map);
@@ -221,7 +229,9 @@ $(function()
         document.location = "#" + stateToHash(getState());
         
         if (loading) return;
-        $("#loader").show();
+        if (filtersShowing==true){
+        	$("#loader").show();
+        }
         loading = true;
 
         var b = map.getBounds();
@@ -398,4 +408,17 @@ $(function()
                                   $("#q").val($(this).text());
                                   loadData();
                               });
+	$("label.radio").click(function() {
+		$("label.radio.active").removeClass('active');
+		$(this).addClass('active');
+		return;
+	});
+
+	$('label.checkbox').click(function(evt) {
+		evt.stopPropagation();
+		evt.preventDefault();
+		$(this).toggleClass('active');
+	});
+
+	
 });

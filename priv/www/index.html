@@ -70,26 +70,27 @@
 
             <div class="control-group">
                 <div class="controls">
-                    <label class="radio inline active">
+                    <label class="radio">
                         <input id="view-items" name="view" class="view" type="radio" value="items" checked="checked" />Items
                     </label>
-                    <label class="radio inline">
+                    <label class="radio">
                         <input id="view-heatmap" name="view" class="view" type="radio" value="heatmap" />Hittekaart
                     </label>
                     <div class="clear"></div>
                 </div>
+                <div id="stats">. . .</div>
             </div>
 
             <div class="control-group">
                 <div class="controls">
-                    <label class="checkbox inline">
-                        <input id="src-twitter" type="checkbox" class="source" value="1" checked="checked" />Twitter
+                    <label class="checkbox twitter">
+                        <input id="src-twitter" type="hidden" class="source" value="1" checked="checked" />Twitter
                     </label>
-                    <label class="checkbox inline">
-                        <input id="src-instagram" type="checkbox" class="source" value="1" checked="checked" />Instagr.am
+                    <label class="checkbox instagram active">
+                        <input id="src-instagram" type="hidden" class="source" value="1" checked="checked" />Instagr.am
                     </label>
-                    <label class="checkbox inline">
-                        <input id="src-vbdb" type="checkbox" class="source" value="1" checked="checked" />Verbeter de buurt
+                    <label class="checkbox vbdb active">
+                        <input id="src-vbdb" type="hidden" class="source" value="1" checked="checked" />Verbeter de buurt
                     </label>
                 </div>
             </div>
@@ -103,19 +104,18 @@
             </div>
             
             <div class="wordcloud">
-                <a href="javascript:;">Floriaderadar</a>
+                <a href="javascript:;">Floriade</a>
                 <a href="javascript:;">Arena</a>
                 <a href="javascript:;">Park</a>
                 <a href="javascript:;">Groen</a>
                 <a href="javascript:;">Grasveld</a>
                 <a href="javascript:;">Natuur</a>
+                <div class="clear"></div>
             </div>
             
             <button id="hide-btn" class="btn btn pull-right">Verberg</button>
             <button id="apply-btn" class="btn btn-primary">OK</button>
-                            <img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
-            
-            <div id="stats" class="pull-right"></div>
+			<img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
 
         </form>
     </div>
