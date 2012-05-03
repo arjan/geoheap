@@ -393,4 +393,9 @@ $(function()
             view = $("input.view:checked").val();
             mapChangeTimer.bump();
         });
+
+    $("div.wordcloud a").live('click', function() {
+                                  $("#q").val($(this).text());
+                                  loadData();
+                              });
 });
