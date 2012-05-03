@@ -274,7 +274,6 @@ div.wordcloud a {
 	width: 70px;
 
 }
-
 .checkbox.twitter.active {
 	color:#fff;
 	background-color:#006dcc;
@@ -321,10 +320,49 @@ div.wordcloud a {
 	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
 .checkbox:hover {
-	background:#999;
+	color:#333;
+	-webkit-transition:background-color 0.1s linear,color 0.1s linear;
+	-moz-transition:background-color 0.1s linear,color 0.1s linear;
+	-ms-transition:background-color 0.1s linear,color 0.1s linear;
+	-o-transition:background-color 0.1s linear,color 0.1s linear
+	transition:background-color 0.1s linear,color 0.1s linear;
 }
-.checkbox.active:hover {
+.checkbox.over:hover {
+	color: #555;
+	background: #f6f6f6;
+	border:1px solid #ccc;
+}
+.checkbox.twitter:hover {
 	
+}
+.checkbox.instagram:hover {
+
+}
+.checkbox.vbdb:hover {
+	background-color:#006dcc;
+	background-image:-moz-linear-gradient(top, #a1d194, #9abc96);
+	background-image:-ms-linear-gradient(top, #a1d194, #9abc96);
+	background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#a1d194), to(#9abc96));
+	background-image:-webkit-linear-gradient(top, #a1d194, #9abc96);
+	background-image:-o-linear-gradient(top, #a1d194, #9abc96);
+	background-image:linear-gradient(top, #a1d194, #9abc96);
+	background-repeat:repeat-x;
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a1d194', endColorstr='#9abc96', GradientType=0);
+	border-color:#9abc96 #9abc96 #002a80;
+	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+.checkbox.vbdb.over.active:hover {
+	color:#333;
+	text-decoration:none;
+	-webkit-transition:background-color 0.1s linear,color 0.1s linear;
+	-moz-transition:background-color 0.1s linear,color 0.1s linear;
+	-ms-transition:background-color 0.1s linear,color 0.1s linear;
+	-o-transition:background-color 0.1s linear,color 0.1s linear
+	transition:background-color 0.1s linear,color 0.1s linear;
+	background-color: #e6e6e6;
+	background-position: 0 -45px;
+	color:#555;
 }
 #loader {
 	margin: 5px 7px 0 0;

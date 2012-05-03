@@ -418,6 +418,17 @@ $(function()
 		evt.stopPropagation();
 		evt.preventDefault();
 		$(this).toggleClass('active');
+		if ($(this).hasClass('active')==false) {
+			$(this).addClass('over');
+		};
+	});
+	$('label.checkbox').mouseenter(function() {
+		if ($(this).hasClass('active')==true) {
+			$(this).addClass('over');
+		}
+	});
+	$('label.checkbox').mouseleave(function() {
+		$(this).removeClass('over');	
 	});
 
 	
