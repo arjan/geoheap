@@ -63,6 +63,9 @@ handle_cast(_Msg, State) ->
     {noreply, State}.
 
 
+handle_info({http, {R, {{_, 420, _}, _H, _Body}}}, State=#state{request_id=R, backoff=B}) ->
+    {noreply, reconnect(State#state{backoff=2*B})};
+
 handle_info({http, {_, stream_start, _Headers}}, State) ->
     {noreply, State};
 
@@ -90,9 +93,17 @@ handle_info({http, {R, stream_end, _Headers}}, State=#state{request_id=R, backof
     timer:sleep(B*10),
     {noreply, reconnect(State#state{backoff=2*B})};
 
-handle_info({http,{R,{error,socket_closed_remotely}}}, State=#state{request_id=R}) ->
-    {noreply, reconnect(State)};
+handle_info({http, {_, stream_end, _Headers}}, State) ->
+    %% stream_end of previous stream, we're reconnecting
+    {noreply, State};
 
+handle_info({http,{R,{error,Reason}}}, State=#state{request_id=R, backoff=B}) ->
+    lager:info("twitter: Error ~p, restarting~n", [Reason]),
+    {noreply, reconnect(State#state{backoff=2*B})};
+
+
+handle_info(reconnect, State) ->
+    {noreply, reconnect(State)};
 
 handle_info(Info, State) ->
     lager:info("twitter: Unhandled message: ~p~n", [Info]),
@@ -108,8 +119,14 @@ code_change(_OldVsn, State, _Extra) ->
 %% Internal Function Definitions
 %% ------------------------------------------------------------------
 
-reconnect(State) ->
-    lager:info("twitter: Reconnect."),
+reconnect(State=#state{request_id=R}) when R =/= undefined ->
+    httpc:cancel_request(R),
+    reconnect(State#state{request_id=undefined});
+
+reconnect(State=#state{backoff=B}) ->
+    lager:info("twitter: Reconnect waiting ~p secs...", [B]),
+    timer:sleep(1000*B),
+    lager:info("twitter: Reconnect"),
 
     {ok, Login} = application:get_env(geoheap, twitter_username),
     {ok, Password} = application:get_env(geoheap, twitter_password),
@@ -121,4 +138,6 @@ reconnect(State) ->
                                     [],
                                     [{sync, false},
                                      {stream, self}]),
+
+    erlang:send_after(7200*1000, self(), reconnect),
     State#state{request_id=RequestId}.
