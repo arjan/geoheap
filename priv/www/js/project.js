@@ -71,12 +71,12 @@ $(function()
         return encodeURIComponent(JSON.stringify(state));
     };
 	var mapMarkerLevel = function() {
-		return Math.max(0,Math.ceil((map.getZoom()/2.0)-3));
+		return Math.max(0,Math.ceil((map.getZoom()/2.0)-4));
 		console.log(mapMarkerLevel());
 	}
 	var redMarkers = new Array("/img/red/1.png","/img/red/2.png","/img/red/3.png","/img/red/4.png","/img/red/5.png","/img/red/6.png","/img/red/7.png","/img/red/8.png","/img/red/9.png");
 	var blueMarkers = new Array("/img/blue/1.png","/img/blue/2.png","/img/blue/3.png","/img/blue/4.png","/img/blue/5.png","/img/blue/6.png","/img/blue/7.png","/img/blue/8.png","/img/blue/9.png");
-	var greenMarkers = new Array("/img/green/1.png","/img/green/2.png","/img/green/3.png","/img/green/4.png","/img/green/5.png","/img/green/6.png","/img/green/7.png","/img/green/8.png","/img/green/9.png");
+	var orangeMarkers = new Array("/img/orange/1.png","/img/orange/2.png","/img/orange/3.png","/img/orange/4.png","/img/orange/5.png","/img/orange/6.png","/img/orange/7.png","/img/orange/8.png","/img/orange/9.png");
     var ItemMapping = {
         'twitter': function(item) 
         {
@@ -111,7 +111,7 @@ $(function()
                 return "";
             };
             this.markerImage = function() {
-                return greenMarkers[mapMarkerLevel()];
+                return orangeMarkers[mapMarkerLevel()];
             };
             return this;
         }
@@ -289,7 +289,7 @@ $(function()
 														allItems[el.id].marker.setVisible(true);
 														if(allItems[el.id].data.source=='twitter') allItems[el.id].marker.setIcon(blueMarkers[mapMarkerLevel()]);
 														if(allItems[el.id].data.source=='instagram') allItems[el.id].marker.setIcon(redMarkers[mapMarkerLevel()]);
-														if(allItems[el.id].data.source=='vbdb') allItems[el.id].marker.setIcon(greenMarkers[mapMarkerLevel()]);
+														if(allItems[el.id].data.source=='vbdb') allItems[el.id].marker.setIcon(orangeMarkers[mapMarkerLevel()]);
 													}
                                                     return;
                                                 };
@@ -419,13 +419,13 @@ $(function()
 		evt.preventDefault();
 		$(this).removeClass('dead');
 		$(this).toggleClass('active');
-		$(this).toggleClass('over');
+		$(this).addClass('over');
 		if ($(this).hasClass('active')==true) {
 			$(this).children('input').attr("checked","checked");
 			console.log("check it!");
 		}
 		else if ($(this).hasClass('active')==false) {
-			$(this).children("input").removeAttr("checked");
+			$(this).children('input').removeAttr("checked");
 			console.log("uncheck it!");
 		}
 	});
