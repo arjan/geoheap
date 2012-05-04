@@ -161,7 +161,7 @@ $(function()
     var applyState = function(state) {
         map.setCenter(new google.maps.LatLng(state[0], state[1]));
         map.setZoom(state[2]);
-        $("input.source").each(function(){$(this).removeAttr("checked"); if ($.inArray($(this).attr("id").substr(4), state[3])>=0) $(this).attr("checked", "checked");});
+//         $("input.source").each(function(){$(this).removeAttr("checked"); if ($.inArray($(this).attr("id").substr(4), state[3])>=0) $(this).attr("checked", "checked");});
         view = state[4];
         $("input.view").removeAttr("checked");
         $("#view-" + view).attr("checked", "checked");
@@ -420,6 +420,14 @@ $(function()
 		$(this).removeClass('dead');
 		$(this).toggleClass('active');
 		$(this).toggleClass('over');
+		if ($(this).hasClass('active')==true) {
+			$(this).children('input').attr("checked","checked");
+			console.log("check it!");
+		}
+		else if ($(this).hasClass('active')==false) {
+			$(this).children("input").removeAttr("checked");
+			console.log("uncheck it!");
+		}
 	});
 	$('label.checkbox').mouseleave(function() {
 		$(this).removeClass('over');
