@@ -161,7 +161,7 @@ $(function()
     var applyState = function(state) {
         map.setCenter(new google.maps.LatLng(state[0], state[1]));
         map.setZoom(state[2]);
-//         $("input.source").each(function(){$(this).removeAttr("checked"); if ($.inArray($(this).attr("id").substr(4), state[3])>=0) $(this).attr("checked", "checked");});
+        $("input.source").each(function(){$(this).removeAttr("checked"); if ($.inArray($(this).attr("id").substr(4), state[3])>=0) $(this).attr("checked", "checked");});
         view = state[4];
         $("input.view").removeAttr("checked");
         $("#view-" + view).attr("checked", "checked");
