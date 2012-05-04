@@ -417,18 +417,13 @@ $(function()
 	$('label.checkbox').click(function(evt) {
 		evt.stopPropagation();
 		evt.preventDefault();
+		$(this).removeClass('dead');
 		$(this).toggleClass('active');
-		if ($(this).hasClass('active')==false) {
-			$(this).addClass('over');
-		};
-	});
-	$('label.checkbox').mouseenter(function() {
-		if ($(this).hasClass('active')==true) {
-			$(this).addClass('over');
-		}
+		$(this).toggleClass('over');
 	});
 	$('label.checkbox').mouseleave(function() {
-		$(this).removeClass('over');	
+		$(this).removeClass('over');
+		$(this).addClass('dead');	
 	});
 
 	

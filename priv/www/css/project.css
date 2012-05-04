@@ -208,7 +208,7 @@ div.infowindow-header a {
 
 }
 div.infowindow-header a:hover {
-  text-decoreation: underline;
+  text-decoration: underline;
 
   color:#5d9000;
 
@@ -263,8 +263,14 @@ div.clear {
 	padding: 0;
 	
 }
+div.twitter-button {
+	width:140px;
+	margin: 0 0 15px 0;
+}
+
 div.wordcloud {
 	margin: 0 0 15px 0;
+	width: 140px;
 
 	
 }
@@ -272,9 +278,79 @@ div.wordcloud a {
 	display:block;
 	float: left;
 	width: 70px;
-
+	color:#555;
 }
-.checkbox.twitter.active {
+div.wordcloud a:hover {
+	text-decoration: underline;
+	color: #5d9000;
+}
+.checkbox.dead, .checkbox.over, .checkbox.twitter.over:hover {
+	float:none;
+	background: #f6f6f6;
+	color: #999;
+	margin: 4px 0 4px 0;
+	border:1px solid #ccc;
+	border-bottom-color:#bbb;
+	-webkit-border-radius:6px;
+	-moz-border-radius:6px;
+	border-radius:6px;
+	-webkit-box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05);
+	-moz-box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05);
+	box-shadow:inset 0 1px 0 rgba(255, 255, 255, 0.2),0 1px 2px rgba(0, 0, 0, 0.05);
+	cursor:pointer;
+	-webkit-transition:background-color 0.1s linear,color 0.1s linear;
+	-moz-transition:background-color 0.1s linear,color 0.1s linear;
+	-ms-transition:background-color 0.1s linear,color 0.1s linear;
+	-o-transition:background-color 0.1s linear,color 0.1s linear
+	transition:background-color 0.1s linear,color 0.1s linear;
+}
+.checkbox.twitter.dead:hover {
+	color:#fff;
+	background-color:#9caaba;
+	background-image:-moz-linear-gradient(top, #94cae5, #9caaba);
+	background-image:-ms-linear-gradient(top, #94cae5, #9caaba);
+	background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#94cae5), to(#9caaba));
+	background-image:-webkit-linear-gradient(top, #94cae5, #9caaba);
+	background-image:-o-linear-gradient(top, #94cae5, #9caaba);
+	background-image:linear-gradient(top, #94cae5, #9caaba);
+	background-repeat:repeat-x;
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#94cae5', endColorstr='#9caaba', GradientType=0);
+	border-color:#9caaba #9caaba #9caaba;
+	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+.checkbox.instagram.dead:hover {
+	color:#fff;
+	background-color:#d49494;
+	background-image:-moz-linear-gradient(top, #eca8a1, #d49494);
+	background-image:-ms-linear-gradient(top, #eca8a1, #d49494);
+	background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#eca8a1), to(#d49494));
+	background-image:-webkit-linear-gradient(top, #eca8a1, #d49494);
+	background-image:-o-linear-gradient(top, #eca8a1, #d49494);
+	background-image:linear-gradient(top, #eca8a1, #d49494);
+	background-repeat:repeat-x;
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#eca8a1', endColorstr='#d49494', GradientType=0);
+	border-color:#d49494 #d49494 #d49494;
+	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+.checkbox.vbdb.dead:hover {
+	color:#fff;
+	background-color:#99bc95;
+	background-image:-moz-linear-gradient(top, #a1d194, #99bc95);
+	background-image:-ms-linear-gradient(top, #a1d194, #99bc95);
+	background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#a1d194), to(#99bc95));
+	background-image:-webkit-linear-gradient(top, #a1d194, #99bc95);
+	background-image:-o-linear-gradient(top, #a1d194, #99bc95);
+	background-image:linear-gradient(top, #a1d194, #99bc95);
+	background-repeat:repeat-x;
+	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a1d194', endColorstr='#99bc95', GradientType=0);
+	border-color:#99bc95 #99bc95 #99bc95;
+	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
+	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
+}
+
+.checkbox.twitter.active.dead, .checkbox.twitter.active.over, .checkbox.twitter.active.over:hover {
 	color:#fff;
 	background-color:#006dcc;
 	background-image:-moz-linear-gradient(top, #0088cc, #14357f);
@@ -289,7 +365,8 @@ div.wordcloud a {
 	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
-.checkbox.instagram.active {
+
+.checkbox.instagram.active.dead, .checkbox.instagram.active.over, .checkbox.instagram.active.over:hover {
 	color:#fff;
 	background-color:#cc2200;
 	background-image:-moz-linear-gradient(top, #dd3322, #a00000);
@@ -304,7 +381,8 @@ div.wordcloud a {
 	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
-.checkbox.vbdb.active {
+
+.checkbox.vbdb.active.dead, .checkbox.vbdb.active.over, .checkbox.vbdb.active.over:hover {
 	color:#fff;
 	background-color:#006dcc;
 	background-image:-moz-linear-gradient(top, #229900, #0e6404);
@@ -319,51 +397,13 @@ div.wordcloud a {
 	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
 	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
 }
-.checkbox:hover {
-	color:#333;
-	-webkit-transition:background-color 0.1s linear,color 0.1s linear;
-	-moz-transition:background-color 0.1s linear,color 0.1s linear;
-	-ms-transition:background-color 0.1s linear,color 0.1s linear;
-	-o-transition:background-color 0.1s linear,color 0.1s linear
-	transition:background-color 0.1s linear,color 0.1s linear;
-}
-.checkbox.over:hover {
+
+.checkbox.active.dead:hover {
 	color: #555;
 	background: #f6f6f6;
 	border:1px solid #ccc;
 }
-.checkbox.twitter:hover {
-	
-}
-.checkbox.instagram:hover {
 
-}
-.checkbox.vbdb:hover {
-	background-color:#006dcc;
-	background-image:-moz-linear-gradient(top, #a1d194, #9abc96);
-	background-image:-ms-linear-gradient(top, #a1d194, #9abc96);
-	background-image:-webkit-gradient(linear, 0 0, 0 100%, from(#a1d194), to(#9abc96));
-	background-image:-webkit-linear-gradient(top, #a1d194, #9abc96);
-	background-image:-o-linear-gradient(top, #a1d194, #9abc96);
-	background-image:linear-gradient(top, #a1d194, #9abc96);
-	background-repeat:repeat-x;
-	filter:progid:DXImageTransform.Microsoft.gradient(startColorstr='#a1d194', endColorstr='#9abc96', GradientType=0);
-	border-color:#9abc96 #9abc96 #002a80;
-	border-color:rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.1) rgba(0, 0, 0, 0.25);
-	filter:progid:DXImageTransform.Microsoft.gradient(enabled = false);
-}
-.checkbox.vbdb.over.active:hover {
-	color:#333;
-	text-decoration:none;
-	-webkit-transition:background-color 0.1s linear,color 0.1s linear;
-	-moz-transition:background-color 0.1s linear,color 0.1s linear;
-	-ms-transition:background-color 0.1s linear,color 0.1s linear;
-	-o-transition:background-color 0.1s linear,color 0.1s linear
-	transition:background-color 0.1s linear,color 0.1s linear;
-	background-color: #e6e6e6;
-	background-position: 0 -45px;
-	color:#555;
-}
 #loader {
 	margin: 5px 7px 0 0;
 }
