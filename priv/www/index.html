@@ -54,56 +54,58 @@
 
         <div class="widget filtertool">
             <div class="filtertool-contents">
-                <div class="twitter-button">
-                    <a href="https://twitter.com/share" class="twitter-share-button" data-url="www.floriaderadar.com" data-lang="nl" data-size="large" data-hashtags="FloriadeRadar">Tweeten</a>
-                    <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
-                </div>
-                <form id="filter-form">
-
-                    <div class="control-group">
-                        <div class="controls">
-                            <label class="radio active">
-                                <input id="view-items" name="view" class="view" type="radio" value="items" checked="checked" />Items
-                            </label>
-                            <label class="radio">
-                                <input id="view-heatmap" name="view" class="view" type="radio" value="heatmap" />Hittekaart
-                            </label>
-                            <div class="clear"></div>
-                        </div>
-                        <div id="stats">. . .</div>
-                    </div>
-
-                    <div class="control-group">
-                        <div class="controls">
-                            <label class="checkbox twitter">
-                                <input id="src-twitter" type="hidden" checked="checked" class="source" value="1" />Twitter
-                            </label>
-                            <label class="checkbox instagram">
-                                <input id="src-instagram" type="hidden" checked="checked" class="source" value="1" />Instagr.am
-                            </label>
-                            <label class="checkbox vbdb">
-                                <input id="src-vbdb" type="hidden" checked="checked" class="source" value="1" />Verbeter de buurt
-                            </label>
-                        </div>
-                    </div>
-
-                    <div class="control-group">
-                        <div class="controls">
-                            <input class="q" type="text" placeholder="Voer zoekterm in..." id="q" />
-                        </div>
-                    </div>
-                    
-                    <div class="wordcloud">
-                        <a href="javascript:;">Floriade</a>
-                        <a href="javascript:;">Arena</a>
-                        <a href="javascript:;">Park</a>
-                        <a href="javascript:;">Groen</a>
-                        <a href="javascript:;">Grasveld</a>
-                        <a href="javascript:;">Natuur</a>
-                    </div>
-                    
-                    <button id="hide-btn" class="btn btn-mini pull-right">Verberg</button>
+				<div class="filtertool-hide">
+					<div class="twitter-button">
+						<a href="https://twitter.com/share" class="twitter-share-button" data-url="www.floriaderadar.com" data-lang="nl" data-size="large" data-hashtags="FloriadeRadar">Tweeten</a>
+						<script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+					</div>
+					<form id="filter-form">
+	
+						<div class="control-group">
+							<div class="controls">
+								<label class="radio active">
+									<input id="view-items" name="view" class="view" type="radio" value="items" checked="checked" />Items
+								</label>
+								<label class="radio">
+									<input id="view-heatmap" name="view" class="view" type="radio" value="heatmap" />Hittekaart
+								</label>
+								<div class="clear"></div>
+							</div>
+							<div id="stats">. . .</div>
+						</div>
+	
+						<div class="control-group">
+							<div class="controls">
+								<label class="checkbox twitter">
+									<input id="src-twitter" type="hidden" checked="checked" class="source" value="1" />Twitter
+								</label>
+								<label class="checkbox instagram">
+									<input id="src-instagram" type="hidden" checked="checked" class="source" value="1" />Instagr.am
+								</label>
+								<label class="checkbox vbdb">
+									<input id="src-vbdb" type="hidden" checked="checked" class="source" value="1" />Verbeter de buurt
+								</label>
+							</div>
+						</div>
+	
+						<div class="control-group">
+							<div class="controls">
+								<input class="q" type="text" placeholder="Voer zoekterm in..." id="q" />
+							</div>
+						</div>
+						
+						<div class="wordcloud">
+							<a href="javascript:;">Floriade</a>
+							<a href="javascript:;">Arena</a>
+							<a href="javascript:;">Park</a>
+							<a href="javascript:;">Groen</a>
+							<a href="javascript:;">Grasveld</a>
+							<a href="javascript:;">Natuur</a>
+						</div>
+				</div>
+                    <button id="hide-btn" class="btn pull-right">Verberg</button>
 		    <img class="pull-right" src="/img/loading.gif" id="loader" style="display:none" />
+		                        <div class="clear"></div>
                 </form>
             </div>
     <script type="text/javascript">

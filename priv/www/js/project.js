@@ -37,16 +37,19 @@ $(function()
 
     function showFilterTool() {
         filtersShowing = true;
-        $(".filtertool-contents").show();
+        $(".filtertool-hide").show();
         $("#apply-btn").show();
         $("#stats").show();
         $(".wordcloud").show();
         $("#hide-btn").text("Verberg").blur();
         $(".filtertool").css("width", "auto");
+        $(".filtertool-contents").css("width",140);
+        $("#hide-btn").css("margin-top",10);
     }
 
     function hideFilterTool() {
-        $(".filtertool-contents").hide();
+//         $(".filtertool-contents").hide();
+		$(".filtertool-hide").hide();
         $("#apply-btn").hide();
         $("#stats").hide();
         $("#hide-btn").text("Filter").blur();
@@ -54,6 +57,8 @@ $(function()
         $("#loader").hide();
         filtersShowing = false;
         $(".filtertool").css("width", 50);
+        $(".filtertool-contents").css("width", 50);
+        $("#hide-btn").css("margin-top",2);
     }
 
     $("#hide-btn").click(
