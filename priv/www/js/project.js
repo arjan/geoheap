@@ -70,13 +70,12 @@ $(function()
     var stateToHash = function(state) {
         return encodeURIComponent(JSON.stringify(state));
     };
-	var mapMarkerLevel = function() {
-		return Math.max(0,Math.ceil((map.getZoom()/2.0)-4));
-		console.log(mapMarkerLevel());
-	}
-	var redMarkers = new Array("/img/red/1.png","/img/red/2.png","/img/red/3.png","/img/red/4.png","/img/red/5.png","/img/red/6.png","/img/red/7.png","/img/red/8.png","/img/red/9.png");
-	var blueMarkers = new Array("/img/blue/1.png","/img/blue/2.png","/img/blue/3.png","/img/blue/4.png","/img/blue/5.png","/img/blue/6.png","/img/blue/7.png","/img/blue/8.png","/img/blue/9.png");
-	var orangeMarkers = new Array("/img/orange/1.png","/img/orange/2.png","/img/orange/3.png","/img/orange/4.png","/img/orange/5.png","/img/orange/6.png","/img/orange/7.png","/img/orange/8.png","/img/orange/9.png");
+    var mapMarkerLevel = function() {
+	return Math.max(0,Math.ceil((map.getZoom()/2.0)-4));
+    };
+    var redMarkers = new Array("/img/red/1.png","/img/red/2.png","/img/red/3.png","/img/red/4.png","/img/red/5.png","/img/red/6.png","/img/red/7.png","/img/red/8.png","/img/red/9.png");
+    var blueMarkers = new Array("/img/blue/1.png","/img/blue/2.png","/img/blue/3.png","/img/blue/4.png","/img/blue/5.png","/img/blue/6.png","/img/blue/7.png","/img/blue/8.png","/img/blue/9.png");
+    var orangeMarkers = new Array("/img/orange/1.png","/img/orange/2.png","/img/orange/3.png","/img/orange/4.png","/img/orange/5.png","/img/orange/6.png","/img/orange/7.png","/img/orange/8.png","/img/orange/9.png");
     var ItemMapping = {
         'twitter': function(item) 
         {
@@ -155,17 +154,27 @@ $(function()
     var getState = function() {
         var c = map.getCenter();
         var sources = [];
-        $("input.source:checked").each(function() { sources.push($(this).attr("id").substr(4));});
+        $("input.source").each(function() { if ($(this).val() == "1") sources.push($(this).attr("id").substr(4));});
         return [c.lat(), c.lng(), map.getZoom(),sources, view, timebar.getBracket(), Util.ISODateString(timebar.getTimeStart())];
     };
     var applyState = function(state) {
         map.setCenter(new google.maps.LatLng(state[0], state[1]));
         map.setZoom(state[2]);
-        $("input.source").each(function(){$(this).removeAttr("checked"); if ($.inArray($(this).attr("id").substr(4), state[3])>=0) $(this).attr("checked", "checked");});
+        $("input.source").each(function(){
+                                   var parent = $(this).parents("label:first");
+                                   if ($.inArray($(this).attr("id").substr(4), state[3])>=0) {
+                                       $(this).val("1");
+                                       parent.addClass("active dead");
+                                   } else {
+                                       $(this).val("0");
+                                       parent.addClass("dead");
+                                   }
+                               });
         view = state[4];
         $("input.view").removeAttr("checked");
         $("#view-" + view).attr("checked", "checked");
-		$("#view-" + view).parent().addClass('active');
+        $("label.radio").removeClass("active");
+	$("#view-" + view).parent().addClass('active');
 //FIXME        timebar.setTimeStart(new Date(state[6]));
         timebar.setBracket(state[5][0], state[5][1]);
     };
@@ -241,11 +250,8 @@ $(function()
             new google.maps.LatLng(c.lat(), b.getSouthWest().lng()),
             c);
 
-        var srci = $("#src-instagram:checked").length > 0;
-        var srct = $("#src-twitter:checked").length > 0;
-        
         var sources = "";
-        $("input.source:checked").each(function() { sources += " source: " + $(this).attr("id").substr(4);});
+        $("input.source").each(function() { if ($(this).val()=="1") sources += " source: " + $(this).attr("id").substr(4);});
         if (sources)
             sources = "+(" + sources + ")";
 
@@ -286,11 +292,11 @@ $(function()
                                                 hit[el.id] = true;
                                                 if (el.id in allItems) {
                                                     if (view == 'items') {
-														allItems[el.id].marker.setVisible(true);
-														if(allItems[el.id].data.source=='twitter') allItems[el.id].marker.setIcon(blueMarkers[mapMarkerLevel()]);
-														if(allItems[el.id].data.source=='instagram') allItems[el.id].marker.setIcon(redMarkers[mapMarkerLevel()]);
-														if(allItems[el.id].data.source=='vbdb') allItems[el.id].marker.setIcon(orangeMarkers[mapMarkerLevel()]);
-													}
+							allItems[el.id].marker.setVisible(true);
+							if(allItems[el.id].data.source=='twitter') allItems[el.id].marker.setIcon(blueMarkers[mapMarkerLevel()]);
+							if(allItems[el.id].data.source=='instagram') allItems[el.id].marker.setIcon(redMarkers[mapMarkerLevel()]);
+							if(allItems[el.id].data.source=='vbdb') allItems[el.id].marker.setIcon(orangeMarkers[mapMarkerLevel()]);
+						    }
                                                     return;
                                                 };
                                                 var item = ItemFactory(el);
@@ -303,7 +309,7 @@ $(function()
                                                         lastnew = item;
                                                 }
                                                 allItems[item.data.id] = item;
-                                                if (view != 'items') {allItems[el.id].marker.setVisible(false)};
+                                                if (view != 'items') allItems[el.id].marker.setVisible(false);
                                                 item.marker.setMap(map);
 												
                                             });
@@ -356,7 +362,8 @@ $(function()
         hoverlay.setDataSet(dataset);
     }
     
-    var mapChangeTimer = Util.IdleTimer(1000, loadData);
+    var mapChangeTimer = Util.IdleTimer(500, loadData);
+
     google.maps.event.addListener(map, 'bounds_changed', function() {
                                       mapChangeTimer.bump();
                                   });
@@ -373,6 +380,10 @@ $(function()
                     }
                 }, 5000);
 
+    $("#q")
+        .change(function(){mapChangeTimer.bump();})
+        .keyup(function(){mapChangeTimer.bump();});
+    
     $("#filter-form").submit(
         function(e) {
             e.preventDefault();
@@ -380,23 +391,6 @@ $(function()
         });
 
     var geocoder = new google.maps.Geocoder();
-
-    $("#location-form").submit(
-        function(e) {
-            e.preventDefault();
-            var address = $("#location").val();
-            geocoder.geocode({
-                                 address: address,
-                                 region: 'nl'},
-                             function(results, status) {
-                                 if (status == google.maps.GeocoderStatus.OK) {
-                                     map.setCenter(results[0].geometry.location);
-                                 } else {
-                                     alert("Geocode was not successful for the following reason: " + status);
-                                 }
-                            });
-        });
-    
 
     $("input.view").change(
         function() { 
@@ -408,31 +402,33 @@ $(function()
                                   $("#q").val($(this).text());
                                   loadData();
                               });
-	$("label.radio").click(function() {
-		$("label.radio.active").removeClass('active');
-		$(this).addClass('active');
-		return;
-	});
+    $("label.radio").click(function() {
+		               $("label.radio.active").removeClass('active');
+		               $(this).addClass('active');
+		               return;
+	                   });
 
-	$('label.checkbox').click(function(evt) {
-		evt.stopPropagation();
-		evt.preventDefault();
-		$(this).removeClass('dead');
-		$(this).toggleClass('active');
-		$(this).addClass('over');
-		if ($(this).hasClass('active')==true) {
-			$(this).children('input').attr("checked","checked");
-			console.log("check it!");
-		}
-		else if ($(this).hasClass('active')==false) {
-			$(this).children('input').removeAttr("checked");
-			console.log("uncheck it!");
-		}
+    var clicking=false;
+    $('label.checkbox').click(
+        function(evt) 
+        {
+            if (clicking) return;
+            clicking=true;
+            var el = $(this);
+            setTimeout(function(){
+	                   el.removeClass('dead')
+                               .toggleClass('active')
+                               .addClass('over')
+	                       .children('input')
+                               .val(el.hasClass('active')==true ? "1" : "0");
+                           mapChangeTimer.bump();
+                           clicking=false;
+                       }, 100);
 	});
-	$('label.checkbox').mouseleave(function() {
-		$(this).removeClass('over');
-		$(this).addClass('dead');	
+    $('label.checkbox').mouseleave(
+        function() {
+	    $(this).removeClass('over');
+	    $(this).addClass('dead');	
 	});
-
-	
+    
 });

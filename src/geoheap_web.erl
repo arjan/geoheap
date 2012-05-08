@@ -48,6 +48,7 @@ mime() ->
      {<<".html">>, [<<"text/html">>]},
      {<<".css">>, [<<"text/css">>]},
      {<<".png">>, [<<"image/png">>]},
+     {<<".gif">>, [<<"image/gif">>]},
      {<<".jpg">>, [<<"image/jpeg">>]},
      {<<".js">>, [<<"application/javascript">>]}
     ].
