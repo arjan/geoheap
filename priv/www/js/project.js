@@ -33,7 +33,13 @@ document.addEventListener("touchcancel", touchHandler, true);
 
 $(function()
 {
-    var filtersShowing = true;
+    var useragent = navigator.userAgent;
+
+  	if (useragent.indexOf('iPhone') != -1 || useragent.indexOf('Android') != -1 ) {
+    	var filtersShowing = false;
+	  } else {
+		var filtersShowing = true;
+	}
 
     function showFilterTool() {
         filtersShowing = true;
