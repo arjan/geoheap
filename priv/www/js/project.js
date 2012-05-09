@@ -278,7 +278,7 @@ $(function()
                     lastLoad = new Date();
                     lastNumResults = incremental ? (lastNumResults + r.response.numFound) : r.response.numFound;
                     var html = "";
-                    html += "<div>Aantal: " + lastNumResults + "&nbsp; </div>";
+                    html += "<div>Resultaten: " + lastNumResults + "&nbsp; </div>";
                     $("#stats").html(html);
 
                     if (r.facet_counts) {
